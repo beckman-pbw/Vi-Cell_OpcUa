@@ -1,0 +1,110 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ApplicationConfiguration
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:ua="http://opcfoundation.org/UA/2008/02/Types.xsd"
+  xmlns="http://opcfoundation.org/UA/SDK/Configuration.xsd">
+
+  <ApplicationName>Vi-Cell BLU</ApplicationName>
+  <ApplicationUri>urn:localhost:UA:ViCellBlu:Server</ApplicationUri>
+  <ProductUri>uri:beckman.com:ViCellBlu:Server</ProductUri>
+  <ApplicationType>Client_1</ApplicationType>
+
+  <SecurityConfiguration>
+
+    <!-- Where the application instance certificate is stored-->
+    <ApplicationCertificate>
+      <StoreType>Directory</StoreType>
+      <StorePath>%CommonApplicationData%\ViCellBlu\pki\own</StorePath>
+      <SubjectName>CN=Vi-Cell BLU Server, C=US, S=Colorado, O=Beckman Coulter, DC=localhost</SubjectName>
+    </ApplicationCertificate>
+
+    <!-- Where the issuer certificate are stored (certificate authorities) -->
+    <TrustedIssuerCertificates>
+      <StoreType>Directory</StoreType>
+      <StorePath>%CommonApplicationData%\ViCellBlu\pki\issuer</StorePath>
+    </TrustedIssuerCertificates>
+
+    <!-- Where the trust list is stored -->
+    <TrustedPeerCertificates>
+      <StoreType>Directory</StoreType>
+      <StorePath>%CommonApplicationData%\ViCellBlu\pki\trusted</StorePath>
+    </TrustedPeerCertificates>
+
+    <!-- The directory used to store invalid certificates for later review by the administrator. -->
+    <RejectedCertificateStore>
+      <StoreType>Directory</StoreType>
+      <StorePath>%CommonApplicationData%\ViCellBlu\pki\rejected</StorePath>
+    </RejectedCertificateStore>
+
+    <!-- WARNING: The following setting (to automatically accept untrusted certificates) should be used
+    for easy debugging purposes ONLY and turned off for production deployments! -->
+    <AutoAcceptUntrustedCertificates>false</AutoAcceptUntrustedCertificates>
+
+    <!-- WARNING: SHA1 signed certificates are by default rejected and should be phased out. 
+    The setting below to allow them is only required for UACTT (1.02.336.244) which uses SHA-1 signed certs. -->
+    <RejectSHA1SignedCertificates>false</RejectSHA1SignedCertificates>
+    <RejectUnknownRevocationStatus>true</RejectUnknownRevocationStatus>
+    <MinimumCertificateKeySize>2048</MinimumCertificateKeySize>
+    <AddAppCertToTrustedStore>false</AddAppCertToTrustedStore>
+    <SendCertificateChain>true</SendCertificateChain>
+
+    <!-- Where the User issuer certificates are stored -->
+    <UserIssuerCertificates>
+      <StoreType>Directory</StoreType>
+      <StorePath>%CommonApplicationData%\ViCellBlu\pki\issuerUser</StorePath>
+    </UserIssuerCertificates>
+
+    <!-- Where the User trust list is stored-->
+    <TrustedUserCertificates>
+      <StoreType>Directory</StoreType>
+      <StorePath>%CommonApplicationData%\ViCellBlu\pki\trustedUser</StorePath>
+    </TrustedUserCertificates>
+
+  </SecurityConfiguration>
+
+  <TransportConfigurations></TransportConfigurations>
+  <TransportQuotas>
+    <OperationTimeout>600000</OperationTimeout>
+    <MaxStringLength>1048576</MaxStringLength>
+    <MaxByteStringLength>1048576</MaxByteStringLength>
+    <MaxArrayLength>65535</MaxArrayLength>
+    <MaxMessageSize>4194304</MaxMessageSize>
+    <MaxBufferSize>65535</MaxBufferSize>
+    <ChannelLifetime>300000</ChannelLifetime>
+    <SecurityTokenLifetime>3600000</SecurityTokenLifetime>
+  </TransportQuotas>
+
+	<ClientConfiguration>
+	    <!--
+	      <ua:String>https://localhost:62640/ViCellBlu/Server</ua:String>
+	      <ua:String>opc.tcp://localhost:62641/ViCellBlu/Server</ua:String>
+	    -->
+	    <DefaultSessionTimeout>600000</DefaultSessionTimeout>
+		<WellKnownDiscoveryUrls>
+			<ua:String>opc.tcp://localhost:4840/UADiscovery</ua:String>
+		</WellKnownDiscoveryUrls>
+		<DiscoveryServers></DiscoveryServers>
+		<!-- The minimum subscription lifetime.
+		This ensures subscriptions are not set to expire too quickly. The requested lifetime count
+		and keep alive count are calculated using this value and the request publishing interval -->
+		<MinSubscriptionLifetime>10000</MinSubscriptionLifetime>
+	</ClientConfiguration>
+
+  <TraceConfiguration>
+    <OutputFilePath>Logs\ViCellBlu.Server.log.txt</OutputFilePath>
+    <DeleteOnLoad>true</DeleteOnLoad>
+    <!-- Show Only Errors -->
+    <!-- <TraceMasks>1</TraceMasks> -->
+    <!-- Show Only Security and Errors -->
+    <!-- <TraceMasks>513</TraceMasks> -->
+    <!-- Show Only Security, Errors and Trace -->
+    <!-- <TraceMasks>515</TraceMasks> -->
+    <!-- Show Only Security, COM Calls, Errors and Trace -->
+    <!-- <TraceMasks>771</TraceMasks> -->
+    <!-- Show Only Security, Service Calls, Errors and Trace -->
+    <!-- <TraceMasks>523</TraceMasks> -->
+    <!-- Show Only Security, ServiceResultExceptions, Errors and Trace -->
+    <!-- <TraceMasks>519</TraceMasks> -->
+  </TraceConfiguration>
+
+</ApplicationConfiguration>

@@ -1,0 +1,24 @@
+<assembly>
+  <!-- 
+    assembly descriptor to create a zip package containing the scripts laid
+    out as in the src/main/scripts directory.
+  -->
+  <id>testapp</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <files>
+  </files>
+  <fileSets>
+    <fileSet>
+      <directory>target/Release/ViCellBLU_dotNET_Test</directory>
+      <lineEnding>keep</lineEnding>
+      <outputDirectory>OpcUaTestApp</outputDirectory>
+      <excludes>
+        <exclude>*.pdb</exclude>
+      </excludes>
+      <fileMode>0755</fileMode>
+    </fileSet>
+  </fileSets>
+</assembly>

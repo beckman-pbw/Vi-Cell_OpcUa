@@ -1,0 +1,57 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>ViCellOpcUaServer</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="log4net" Version="2.0.12" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="8.0.0" />
+    <PackageReference Include="Ninject" Version="3.3.4" />
+    <PackageReference Include="Ninject.Extensions.Logging.Log4net" Version="3.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="log4net.config" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="log4net.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ViCellBluOpcUaModelDesign\ViCellBluOpcUaModelDesign.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Grpc.Core">
+      <HintPath>..\target\dependencies\lib\Grpc.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="GrpcClient">
+      <HintPath>..\target\dependencies\lib\GrpcClient.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="ViCellOpcUaServer.runtimeconfig.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+	<Target Name="AddRuntimeDependenciesToContent" Condition=" '$(TargetFrameworkIdentifier)' == '.NETCoreApp'" BeforeTargets="GetCopyToOutputDirectoryItems" DependsOnTargets="GenerateBuildDependencyFile;GenerateBuildRuntimeConfigurationFiles">
+		<ItemGroup>
+			<ContentWithTargetPath Include="$(ProjectDepsFilePath)" CopyToOutputDirectory="PreserveNewest" TargetPath="$(ProjectDepsFileName)" />
+			<ContentWithTargetPath Include="$(ProjectRuntimeConfigFilePath)" CopyToOutputDirectory="PreserveNewest" TargetPath="$(ProjectRuntimeConfigFileName)" />
+		</ItemGroup>
+	</Target>
+
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	  <Exec Command="xcopy $(SolutionDir)target\dependencies\lib\grpc_csharp_ext.x64.dll $(OutDir) /R /Y&#xD;&#xA;&#xD;&#xA;if $(ConfigurationName) == Debug (&#xD;&#xA;    copy &quot;$(ProjectDir)bin\Debug\net48\ViCellOpcUaServer.exe&quot; \Instrument\OpcUaServer&#xD;&#xA;)&#xD;&#xA;" />
+	  <Exec Command="xcopy $(TargetDir)* \Instrument\OpcUaServer\ /E /C /I /R /Y" />
+	</Target>
+
+</Project>

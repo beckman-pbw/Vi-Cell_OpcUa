@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net48</TargetFramework>
+	  <RuntimeIdentifier>win10-x64</RuntimeIdentifier>
+	  <PublishSingleFile>true</PublishSingleFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="OpcUaClientAPI.runtimeconfig.json" />
+    <None Remove="ViCellBLU.Client.Config.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="OpcUaClientAPI.runtimeconfig.json">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ViCellBLU.Client.Config.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ViCellBluOpcUaModelDesign\ViCellBluOpcUaModelDesign.csproj" />
+  </ItemGroup>
+
+</Project>

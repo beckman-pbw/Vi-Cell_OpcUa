@@ -1,0 +1,37 @@
+<assembly>
+  <!-- 
+    assembly descriptor to create a zip package containing the scripts laid
+    out as in the src/main/scripts directory.
+  -->
+  <id>installer</id>
+  <formats>
+    <format>zip</format>
+  </formats>
+  <includeBaseDirectory>false</includeBaseDirectory>
+  <files>
+    <!-- include the build.properties file, filled in with current properties -->
+    <file>
+      <source>src/main/assembly/HawkeyeOpcUaServer.manifest.txt</source>
+      <outputDirectory>OpcUaServer</outputDirectory>
+      <filtered>true</filtered>
+    </file>
+  </files>
+  <fileSets>
+    <fileSet>
+      <directory>target/Release</directory>
+      <lineEnding>keep</lineEnding>
+      <outputDirectory>OpcUaServer</outputDirectory>
+      <excludes>
+        <exclude>*.pdb</exclude>
+        <exclude>nunit*.*</exclude>
+        <exclude>NUnit3.*</exclude>
+        <exclude>*Test.*</exclude>
+        <exclude>Microsoft.TestPlatform.*</exclude>
+        <exclude>Microsoft.VisualStudio.*</exclude>
+        <exclude>TestResult.xml</exclude>
+        <exclude>testhost.dll</exclude>
+      </excludes>
+      <fileMode>0755</fileMode>
+    </fileSet>
+  </fileSets>
+</assembly>

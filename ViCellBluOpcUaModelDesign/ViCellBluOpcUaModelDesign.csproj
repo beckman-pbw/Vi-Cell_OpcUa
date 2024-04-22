@@ -1,0 +1,68 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net48</TargetFrameworks>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <LangVersion>8</LangVersion>
+    <AssemblyName>CellHealthOpcUaModelDesign</AssemblyName>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="Google.Protobuf" Version="3.15.8" />
+    <PackageReference Include="Grpc" Version="2.37.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.37.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="log4net" Version="2.0.12" />
+    <PackageReference Include="Ninject.Extensions.Factory" Version="3.3.3" />
+    <PackageReference Include="Ninject.Extensions.Logging" Version="3.3.0" />
+    <PackageReference Include="OPCFoundation.NetStandard.Opc.Ua" Version="1.5.374.36" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <None Remove="Model\ViCellBlu.PredefinedNodes.uanodes" />
+    <None Remove="ViCellBLU.Server.Config.xml" />
+  </ItemGroup>
+
+  <ItemGroup>
+	  <EmbeddedResource Include="Model\ViCellBlu.PredefinedNodes.uanodes">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </EmbeddedResource>
+    <EmbeddedResource Include="ViCellBLU.Server.Config.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Schema\ApplicationConfiguration.xsd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="Schema\Opc.Ua.Types.xsd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Model\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="GrpcClient">
+      <HintPath>..\target\dependencies\lib\GrpcClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Protos">
+      <HintPath>..\target\dependencies\lib\Protos.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <Target Name="PreBuild" BeforeTargets="PreBuildEvent">
+    <Exec Command="cmd.exe /c $(SolutionDir)CodeGen\BuildDesign.bat" />
+  </Target>
+
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy /Y &quot;$(TargetDir)$(TargetName).dll&quot; &quot;$(SolutionDir)ViCellOpcUaClient\$(TargetName).dll&quot;" />
+  </Target>
+
+</Project>

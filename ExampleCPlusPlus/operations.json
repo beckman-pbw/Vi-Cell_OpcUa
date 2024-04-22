@@ -1,0 +1,257 @@
+[
+	{
+		"operation": "AutomationLock",
+		"parameters": [ 
+			"MyUsername",
+			"MyPassword" 
+		]
+	},
+	{
+		"operation": "AutomationUnlock",
+		"parameters": [
+			"MyUsername",
+			"MyPassword"
+		]
+	},
+	{
+		"operation": "CleanSampleCup",
+		"parameters": [
+        ""
+		]
+	},
+	{
+		"operation": "CreateCellType",
+		"parameters": [
+			"2B9D4D71-62BF-44E9-AB4B-8978D05977F7",
+			"73BB68B1-8F85-4184-B217-208FC20D3A67"
+		]
+	},
+	{
+		"operation": "CreateQualityControl",
+		"parameters": [
+			"1.0",
+			"1.0",
+			"example",
+			"DEA7EDDC-CE22-4CD1-8C5E-4764DD402A14",
+			"1.0",
+			"1.0",
+			"1",
+			"1",
+			"1",
+			"1.0",
+			"1.0",
+			"1",
+			"1",
+			"1.0",
+			"test comment",
+			"1606159715",
+			"1",
+			"test name",
+			"DE989AD4-CEC4-4DC3-9D7E-991805A31EBA"
+		]
+	},	
+	{
+		"operation": "DeleteCellType",
+		"parameters": [
+			"DEA7EDDC-CE22-4CD1-8C5E-4764DD402A14",
+			"DE989AD4-CEC4-4DC3-9D7E-991805A31EBA"
+		]
+	},
+	{
+		"operation": "DeleteSampleResults",
+		"parameters": [
+			"DEA7EDDC-CE22-4CD1-8C5E-4764DD402A14",
+			"DE989AD4-CEC4-4DC3-9D7E-991805A31EBA"
+		]
+	},
+	{
+		"operation": "EjectStageMethods",
+		"parameters": [
+			""
+		]
+	},
+	{
+		"operation": "ExportConfigFiles",
+		"parameters": [
+			"My Example File Contents 1",
+			"My Example File Contents 2"
+		]
+	},
+	{
+		"operation": "RetrieveSampleExportMethodType",
+		"parameters": [
+			"DEA7EDDC-CE22-4CD1-8C5E-4764DD402A14"
+		]
+	},	
+	{
+		"operation": "GetSampleResults",
+		"parameters": [
+			"0",
+			"0",
+			"0",
+			"test username",
+			"test searchname",
+			"test searchtag",
+			"test celltype quality control name"
+		]
+	},	
+	{
+		"operation": "ImportConfigFiles",
+		"parameters": [
+			"test config contents 1",
+			"test config contents 2"
+		]
+	},	
+	{
+		"operation": "Pause",
+		"parameters": [
+			""
+		]
+	},
+	{
+		"operation": "Resume",
+		"parameters": [
+			""
+		]
+	},
+	{
+		"operation": "Resume",
+		"parameters": [
+			""
+		]
+	},
+	{
+		"operation": "StartMultipleSamples",
+		"parameters": [
+			"1",
+			"test sample name",
+
+			"DEA7EDDC-CE22-4CD1-8C5E-4764DD402A14",
+			"test tag",
+			"0.0",
+			"0.0",
+			"test cell type name",
+			"DEA7EDDC-CE22-4CD1-8C5E-4764DD402A14",
+			"0.0",
+			"0.0",
+			"0.0",
+			"0.0",
+			"1",
+			"1",
+			"1",
+			"0.0",
+			"0.0",
+			"0.0",
+			"0.0",
+			"test cell type name",
+			"DEA7EDDC-CE22-4CD1-8C5E-4764DD402A14",
+			"0.0",
+			"0.0",
+			"0.0",
+			"0.0",
+			"1",
+			"1",
+			"1",
+			"0.0",
+			"0.0",
+			"1",
+			"1",
+			"0.0",
+			"test comments",
+			"1606159715",
+			"test lot number",
+			"test quality control name",
+			"DEA7EDDC-CE22-4CD1-8C5E-4764DD402A14",
+			"1",
+			
+			"DEA7EDDC-CE22-4CD1-8C5E-4764DD402A14",
+			"test tag",
+			"0.0",
+			"0.0",
+			"test cell type name",
+			"DEA7EDDC-CE22-4CD1-8C5E-4764DD402A14",
+			"0.0",
+			"0.0",
+			"0.0",
+			"0.0",
+			"1",
+			"1",
+			"1",
+			"0.0",
+			"0.0",
+			"0.0",
+			"0.0",
+			"test cell type name",
+			"DEA7EDDC-CE22-4CD1-8C5E-4764DD402A14",
+			"0.0",
+			"0.0",
+			"0.0",
+			"0.0",
+			"1",
+			"1",
+			"1",
+			"0.0",
+			"0.0",
+			"1",
+			"1",
+			"0.0",
+			"test comments",
+			"1606159715",
+			"test lot number",
+			"test quality control name",
+			"DEA7EDDC-CE22-4CD1-8C5E-4764DD402A14",
+			"1"
+		]
+	},
+	{
+		"operation": "StartSingleSample",
+		"parameters": [
+			"1",
+			"test sample name",
+
+			"DEA7EDDC-CE22-4CD1-8C5E-4764DD402A14",
+			"test tag",
+			"0.0",
+			"0.0",
+			"test cell type name",
+			"DEA7EDDC-CE22-4CD1-8C5E-4764DD402A14",
+			"0.0",
+			"0.0",
+			"0.0",
+			"0.0",
+			"1",
+			"1",
+			"1",
+			"0.0",
+			"0.0",
+			"0.0",
+			"0.0",
+			"test cell type name",
+			"DEA7EDDC-CE22-4CD1-8C5E-4764DD402A14",
+			"0.0",
+			"0.0",
+			"0.0",
+			"0.0",
+			"1",
+			"1",
+			"1",
+			"0.0",
+			"0.0",
+			"1",
+			"1",
+			"0.0",
+			"test comments",
+			"1606159715",
+			"test lot number",
+			"test quality control name",
+			"DEA7EDDC-CE22-4CD1-8C5E-4764DD402A14",
+			"1"
+		]
+	},
+	{
+		"operation": "Stop",
+		"parameters": [
+			""
+		]
+	}
+]

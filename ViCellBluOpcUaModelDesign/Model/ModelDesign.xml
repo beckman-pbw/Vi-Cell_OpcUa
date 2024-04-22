@@ -1,0 +1,1579 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<opc:ModelDesign
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns:opc="http://opcfoundation.org/UA/ModelDesign.xsd"
+  xmlns:ua="http://opcfoundation.org/UA/"
+  xmlns:uax="http://opcfoundation.org/UA/2008/02/Types.xsd"
+  xmlns:di="http://opcfoundation.org/UA/schemas/DI/"
+  
+  xmlns="https://www.beckman.com/BeckmanUa"
+  TargetNamespace="https://www.beckman.com/BeckmanUa">
+
+<!-- Some possibly useful links:
+https://reference.opcfoundation.org/
+https://github.com/OPCFoundation/UA-ModelCompiler/blob/master/Opc.Ua.ModelCompiler/UA%20Model%20Design.xsd
+https://documentation.unified-automation.com/uasdkhp/1.5.1/html/_l2_data_types.html
+http://www.open62541.org/doc/1.3/client.html
+https://www.researchgate.net/profile/Mariusz-Postol/publication/334259707_OPC_UA_Address_Space_Interchange_XML/links/5d1f583e92851cf440688f3c/OPC-UA-Address-Space-Interchange-XML.pdf?origin=publication_detail
+https://www.macheronte.com/en/opc-ua-model-design-lets-create-a-data-model/
+https://opcua.rocks/step-3-setup-visual-studio-to-edit-opc-ua-modeldesign-files/
+-->
+
+  <opc:Namespaces>
+    <opc:Namespace Name="OpcUa" Prefix="Opc.Ua" XmlNamespace="http://opcfoundation.org/UA/2008/02/Types.xsd">http://opcfoundation.org/UA/</opc:Namespace>
+    <opc:Namespace Name="ViCellBlu" Prefix="ViCellBlu" InternalPrefix="ViCellBlu">https://www.beckman.com/BeckmanUa</opc:Namespace>
+  </opc:Namespaces>
+
+
+<!--### Data Types ##########################################-->
+
+  <!--CredentialDataType-->
+  <opc:DataType SymbolicName="Credential" BaseType="ua:Structure">
+    <opc:Description>DataType for samples</opc:Description>
+    <opc:Fields>
+      <opc:Field Name="Username" DataType="ua:String" ValueRank="Scalar">
+        <opc:Description>Username</opc:Description>
+      </opc:Field>
+      <opc:Field Name="Password" DataType="ua:String" ValueRank="Scalar">
+        <opc:Description>Password</opc:Description>
+      </opc:Field>
+    </opc:Fields>
+  </opc:DataType>
+
+  <!--SampleConfig-->
+  <opc:DataType SymbolicName="SampleConfig" BaseType="ua:Structure">
+    <opc:Description>Data Type for samples</opc:Description>
+    <opc:Fields>
+      <opc:Field Name="SampleUuid" DataType="ua:Guid" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Sample UUID</opc:Description>
+      </opc:Field>
+      <opc:Field Name="SampleName" DataType="ua:String" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Sample Name</opc:Description>
+      </opc:Field>
+      <opc:Field Name="CellType" DataType="CellType" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Cell Type Data Type</opc:Description>
+      </opc:Field>
+      <opc:Field Name="QualityControl" DataType="QualityControl" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Quality Control Data Type</opc:Description>
+      </opc:Field>
+      <opc:Field Name="Dilution" DataType="ua:UInt32" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Dilution</opc:Description>
+      </opc:Field>
+      <opc:Field Name="WashType" DataType="WashTypeEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Wash Type</opc:Description>
+      </opc:Field>
+      <opc:Field Name="Tag" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Sample Tag</opc:Description>
+      </opc:Field>
+      <opc:Field Name="SamplePosition" DataType="SamplePosition" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Sample Position</opc:Description>
+      </opc:Field>
+      <opc:Field Name="PlatePrecession" DataType="PlatePrecessionEnum" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Sample Plate Precession</opc:Description>
+      </opc:Field>
+      <opc:Field Name="SaveEveryNthImage" DataType="ua:UInt32" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Save Every Nth Image (1 - save every image, 99 - save the least number of images)</opc:Description>
+      </opc:Field>
+      <opc:Field Name="SampleStatus" DataType="SampleStatusEnum" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Sample Status</opc:Description>
+      </opc:Field>
+    </opc:Fields>
+  </opc:DataType>
+
+  <!--SampleResult-->
+  <opc:DataType SymbolicName="SampleResult" BaseType="ua:Structure">
+    <opc:Description>Data Type for sample results</opc:Description>
+    <opc:Fields>
+      <opc:Field Name="SampleDataUuid" DataType="ua:Guid" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Sample Data UUID</opc:Description>
+      </opc:Field>
+      <opc:Field Name="SampleId" DataType="ua:String" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Sample ID</opc:Description>
+      </opc:Field>
+      <opc:Field Name="Status" DataType="SampleStatusEnum" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Sample Status</opc:Description>
+      </opc:Field>
+      <opc:Field Name="CellCount" DataType="ua:UInt32" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Total cell count for the sample result</opc:Description>
+      </opc:Field>
+      <opc:Field Name="ViableCells" DataType="ua:UInt32" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Total number of viable cells in the sample result</opc:Description>
+      </opc:Field>
+      <opc:Field Name="TotalCellsPerMilliliter" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Total concentration of the sample result</opc:Description>
+      </opc:Field>
+      <opc:Field Name="ViableCellsPerMilliliter" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Viable concentration of the sample result</opc:Description>
+      </opc:Field>
+      <opc:Field Name="ViabilityPercent" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Viability percentage for the sample result</opc:Description>
+      </opc:Field>
+      <opc:Field Name="AverageDiameter" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Average cell diameter</opc:Description>
+      </opc:Field>
+      <opc:Field Name="AverageViableDiameter" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Average viable cell diameter</opc:Description>
+      </opc:Field>
+      <opc:Field Name="AverageCircularity" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Average circularity</opc:Description>
+      </opc:Field>
+      <opc:Field Name="AverageViableCircularity" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Average viable circularity</opc:Description>
+      </opc:Field>
+      <opc:Field Name="AverageCellsPerImage" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Average cells per image</opc:Description>
+      </opc:Field>
+      <opc:Field Name="AverageBackgroundIntensity" DataType="ua:UInt32" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Average background intensity</opc:Description>
+      </opc:Field>
+      <opc:Field Name="BubbleCount" DataType="ua:UInt32" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Number of bubbles in sample result images</opc:Description>
+      </opc:Field>
+      <opc:Field Name="ClusterCount" DataType="ua:UInt32" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Number of clusters in the sample result images</opc:Description>
+      </opc:Field>
+      <opc:Field Name="ImagesForAnalysis" DataType="ua:UInt32" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Number of images for analysis</opc:Description>
+      </opc:Field>
+      <opc:Field Name="QualityControlName" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Quality Control Name</opc:Description>
+      </opc:Field>
+      <opc:Field Name="CellType" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Cell Type Name</opc:Description>
+      </opc:Field>
+      <opc:Field Name="MinimumDiameter" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Minimum Diameter</opc:Description>
+      </opc:Field>
+      <opc:Field Name="MaximumDiameter" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Maximum Diameter</opc:Description>
+      </opc:Field>
+      <opc:Field Name="Images" DataType="ua:Int32" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Number of Images</opc:Description>
+      </opc:Field>
+      <opc:Field Name="CellSharpness" DataType="ua:Float" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Cell Sharpness</opc:Description>
+      </opc:Field>
+      <opc:Field Name="MinimumCircularity" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Minimum Circularity</opc:Description>
+      </opc:Field>
+      <opc:Field Name="DeclusterDegree" DataType="DeclusterDegreeEnum" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Decluster Degree</opc:Description>
+      </opc:Field>
+      <opc:Field Name="AspirationCycles" DataType="ua:Int32" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Number of Aspiration Cycles</opc:Description>
+      </opc:Field>
+      <opc:Field Name="ViableSpotBrightness" DataType="ua:Float" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Viable Spot Brightness</opc:Description>
+      </opc:Field>
+      <opc:Field Name="ViableSpotArea" DataType="ua:Float" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Viable Spot Area</opc:Description>
+      </opc:Field>
+      <opc:Field Name="MixingCycles" DataType="ua:Int32" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Number of Mixing Cycles</opc:Description>
+      </opc:Field>
+      <opc:Field Name="ConcentrationAdjustmentFactor" DataType="ua:Float" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Concentration Adjustment Factor</opc:Description>
+      </opc:Field>
+      <opc:Field Name="AnalysisDateTime" DataType="ua:DateTime" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Date/Time of the analysis</opc:Description>
+      </opc:Field>
+      <opc:Field Name="ReanalysisDateTime" DataType="ua:DateTime" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Date/Time of the reanalysis</opc:Description>
+      </opc:Field>
+      <opc:Field Name="AnalysisBy" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>User who performed the analysis</opc:Description>
+      </opc:Field>
+      <opc:Field Name="ReanalysisBy" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>User who performed the reanalysis</opc:Description>
+      </opc:Field>
+      <opc:Field Name="Dilution" DataType="ua:UInt32" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Dilution</opc:Description>
+      </opc:Field>
+      <opc:Field Name="WashType" DataType="WashTypeEnum" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Wash Type</opc:Description>
+      </opc:Field>
+      <opc:Field Name="Tag" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Sample Tag</opc:Description>
+      </opc:Field>
+      <opc:Field Name="Position" DataType="SamplePosition" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Sample Position</opc:Description>
+      </opc:Field>
+	  <opc:Field Name="QcStatus" DataType="QcStatusEnum" ValueRank="Scalar" ModellingRule="Optional">
+	    <opc:Description>Sample Position</opc:Description>
+	  </opc:Field>
+    </opc:Fields>
+  </opc:DataType>
+
+  <!--SampleSetDataType-->
+  <opc:DataType SymbolicName="SampleSet" BaseType="ua:Structure">
+    <opc:Description>DataType for sample sets</opc:Description>
+    <opc:Fields>
+      <opc:Field Name="SampleSetUuid" DataType="ua:Guid" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>UUID for the sample set</opc:Description>
+      </opc:Field>
+      <opc:Field Name="SampleSetName" DataType="ua:String" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Sample set name</opc:Description>
+      </opc:Field>
+      <opc:Field Name="Samples" DataType="SampleConfig" ValueRank="Array" ModellingRule="Optional">
+        <opc:Description>Array of samples for the sample set</opc:Description>
+      </opc:Field>
+      <opc:Field Name="PlatePrecession" DataType="PlatePrecessionEnum" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Sample Plate Precession</opc:Description>
+      </opc:Field>
+    </opc:Fields>
+  </opc:DataType>
+
+  <!--SamplePositionDataType-->
+  <opc:DataType SymbolicName="SamplePosition" BaseType="ua:Structure">
+    <opc:Description>DataType for a sample's position and includes carrier information</opc:Description>
+    <opc:Fields>
+      <opc:Field Name="Row" DataType="ua:String" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>The row (A - H for 96 well plate, Z for carousel, Y for automation cup</opc:Description>
+      </opc:Field>
+      <opc:Field Name="Column" DataType="ua:UInt32" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>The column for the position (carousel number, 96 well plate column number, or 1 for automation cup</opc:Description>
+      </opc:Field>
+    </opc:Fields>
+  </opc:DataType>
+
+  <!--CellTypeDataType-->
+  <opc:DataType SymbolicName="CellType" BaseType="ua:Structure">
+    <opc:Description>DataType for cell type</opc:Description>
+    <opc:Fields>
+      <opc:Field Name="CellTypeName" DataType="ua:String" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Cell Type Name</opc:Description>
+      </opc:Field>
+      <opc:Field Name="MinDiameter" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Minimum Diameter</opc:Description>
+      </opc:Field>
+      <opc:Field Name="MaxDiameter" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Maximum Diameter</opc:Description>
+      </opc:Field>
+      <opc:Field Name="NumImages" DataType="ua:Int32" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Number of Images</opc:Description>
+      </opc:Field>
+      <opc:Field Name="CellSharpness" DataType="ua:Float" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Cell Sharpness</opc:Description>
+      </opc:Field>
+      <opc:Field Name="MinCircularity" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Minimum Circularity</opc:Description>
+      </opc:Field>
+      <opc:Field Name="DeclusterDegree" DataType="DeclusterDegreeEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Decluster Degree</opc:Description>
+      </opc:Field>
+      <opc:Field Name="NumAspirationCycles" DataType="ua:Int32" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Number of Aspiration Cycles</opc:Description>
+      </opc:Field>
+      <opc:Field Name="ViableSpotBrightness" DataType="ua:Float" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Viable Spot Brightness</opc:Description>
+      </opc:Field>
+      <opc:Field Name="ViableSpotArea" DataType="ua:Float" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Viable Spot Area</opc:Description>
+      </opc:Field>
+      <opc:Field Name="NumMixingCycles" DataType="ua:Int32" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Number of Mixing Cycles</opc:Description>
+      </opc:Field>
+      <opc:Field Name="ConcentrationAdjustmentFactor" DataType="ua:Float" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Concentration Adjustment Factor for automation cup calculations</opc:Description>
+      </opc:Field>
+    </opc:Fields>
+  </opc:DataType>
+
+  <!--QualityControlDataType-->
+  <opc:DataType SymbolicName="QualityControl" BaseType="ua:Structure">
+    <opc:Description>DataType for quality control</opc:Description>
+    <opc:Fields>
+      <opc:Field Name="QualityControlName" DataType="ua:String" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Quality Control Name</opc:Description>
+      </opc:Field>
+      <opc:Field Name="CellTypeName" DataType="ua:String" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>The name of the cell type that the quality control is based on</opc:Description>
+      </opc:Field>
+      <opc:Field Name="AssayParameter" DataType="AssayParameterEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Assay Parameter</opc:Description>
+      </opc:Field>
+      <opc:Field Name="LotNumber" DataType="ua:String" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Lot Number</opc:Description>
+      </opc:Field>
+      <opc:Field Name="AssayValue" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Assay Value</opc:Description>
+      </opc:Field>
+      <opc:Field Name="AcceptanceLimits" DataType="ua:Int32" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Acceptance Limits</opc:Description>
+      </opc:Field>
+      <opc:Field Name="ExpirationDate" DataType="ua:DateTime" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Decluster Degree</opc:Description>
+      </opc:Field>
+      <opc:Field Name="Comments" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Quality Control Comments</opc:Description>
+      </opc:Field>
+    </opc:Fields>
+  </opc:DataType>
+	
+  <!--SampleStatusData-->
+  <opc:DataType SymbolicName="SampleStatusData" BaseType="ua:Structure">
+    <opc:Description>DataType for Sample Status Data</opc:Description>
+    <opc:Fields>
+      <opc:Field Name="SampleId" DataType="ua:String" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Sample ID</opc:Description>
+      </opc:Field>
+      <opc:Field Name="AnalysisBy" DataType="ua:String" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Analysis By</opc:Description>
+      </opc:Field>
+      <opc:Field Name="SampleStatus" DataType="SampleStatusEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Sample Status</opc:Description>
+      </opc:Field>
+      <opc:Field Name="SamplePosition" DataType="SamplePosition" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Sample Position</opc:Description>
+      </opc:Field>
+      <opc:Field Name="SampleDataUuid" DataType="ua:Guid" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Sample Data UUID</opc:Description>
+      </opc:Field>
+    </opc:Fields>
+  </opc:DataType>
+
+	<opc:DataType SymbolicName="DeleteSampleStatus" BaseType="ua:Structure">
+		<opc:Description>DataType for Sample delete request</opc:Description>
+		<opc:Fields>
+			<opc:Field Name="DeleteStatus" DataType="DeleteStatusEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+				<opc:Description>Delete status</opc:Description>
+			</opc:Field>
+			<opc:Field Name="DeletePercent" DataType="ua:UInt32" ValueRank="Scalar" ModellingRule="Mandatory">
+				<opc:Description>Percent complete</opc:Description>
+			</opc:Field>
+		</opc:Fields>
+	</opc:DataType>
+
+	<opc:DataType SymbolicName="ExportStatusData" BaseType="ua:Structure">
+		<opc:Description>DataType for Sample Export request</opc:Description>
+		<opc:Fields>
+			<opc:Field Name="BulkDataId" DataType="ua:String" ValueRank="Scalar" ModellingRule="Mandatory">
+				<opc:Description>Bulk Data ID</opc:Description>
+			</opc:Field>
+			<opc:Field Name="ExportStatus" DataType="ExportStatusEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+				<opc:Description>Export status</opc:Description>
+			</opc:Field>
+			<opc:Field Name="ExportPercent" DataType="ua:UInt32" ValueRank="Scalar" ModellingRule="Mandatory">
+				<opc:Description>Percent complete</opc:Description>
+			</opc:Field>
+		</opc:Fields>
+	</opc:DataType>
+
+	<opc:DataType SymbolicName="ExportBlockData" BaseType="ua:Structure">
+    <opc:Description>DataType for Sample Export file data block</opc:Description>
+    <opc:Fields>
+		<opc:Field Name="BulkDataId" DataType="ua:String" ValueRank="Scalar" ModellingRule="Mandatory">
+			<opc:Description>The ID of this export</opc:Description>
+		</opc:Field>
+		<opc:Field Name="Status" DataType="GetBlockStateEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Export status</opc:Description>
+      </opc:Field>
+      <opc:Field Name="Index" DataType="ua:UInt32" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Analysis By</opc:Description>
+      </opc:Field>
+      <opc:Field Name="FileData" DataType="ua:ByteString" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>File data</opc:Description>
+      </opc:Field>
+    </opc:Fields>
+  </opc:DataType>
+
+  <!--VcbResult-->
+  <opc:DataType SymbolicName="VcbResult" BaseType="ua:Structure">
+    <opc:Description>DataType for automation responses</opc:Description>
+    <opc:Fields>
+      <opc:Field Name="MethodResult" DataType="MethodResultEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Response result</opc:Description>
+      </opc:Field>
+      <opc:Field Name="ResponseDescription" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Response description</opc:Description>
+      </opc:Field>
+      <opc:Field Name="ErrorLevel" DataType="ErrorLevelEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Error level</opc:Description>
+      </opc:Field>
+    </opc:Fields>
+  </opc:DataType>
+
+	<!--VcbResultGetSampleResults-->
+  <opc:DataType SymbolicName="VcbResultGetSampleResults" BaseType="ua:Structure">
+      <opc:Description>DataType for GetSampleResults automation responses</opc:Description>
+      <opc:Fields>
+          <opc:Field Name="MethodResult" DataType="MethodResultEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+              <opc:Description>Response result</opc:Description>
+          </opc:Field>
+          <opc:Field Name="ResponseDescription" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+              <opc:Description>Response description</opc:Description>
+          </opc:Field>
+          <opc:Field Name="ErrorLevel" DataType="ErrorLevelEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+              <opc:Description>Error level</opc:Description>
+          </opc:Field>
+          <opc:Field Name="SampleResults" DataType="SampleResult" ValueRank="Array" ModellingRule="Mandatory">
+              <opc:Description>Sample Results</opc:Description>
+          </opc:Field>
+      </opc:Fields>
+  </opc:DataType>
+	
+  <!--VcbResultGetCellTypes-->
+  <opc:DataType SymbolicName="VcbResultGetCellTypes" BaseType="ua:Structure">
+	  <opc:Description>DataType for GetCellTypes automation responses</opc:Description>
+	  <opc:Fields>
+		  <opc:Field Name="MethodResult" DataType="MethodResultEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Response result</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ResponseDescription" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+			  <opc:Description>Response description</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ErrorLevel" DataType="ErrorLevelEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Error level</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="CellTypes" DataType="CellType" ValueRank="Array" ModellingRule="Optional">
+			  <opc:Description>Cell Types</opc:Description>
+		  </opc:Field>
+	  </opc:Fields>
+  </opc:DataType>
+
+  <!--VcbResultCreateCellType-->
+  <opc:DataType SymbolicName="VcbResultCreateCellType" BaseType="ua:Structure">
+	  <opc:Description>DataType for CreateCellType automation responses</opc:Description>
+	  <opc:Fields>
+		  <opc:Field Name="MethodResult" DataType="MethodResultEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Response result</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ResponseDescription" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+			  <opc:Description>Response description</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ErrorLevel" DataType="ErrorLevelEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Error level</opc:Description>
+		  </opc:Field>
+	  </opc:Fields>
+  </opc:DataType>
+
+  <!--VcbResultRequestLock-->
+  <opc:DataType SymbolicName="VcbResultRequestLock" BaseType="ua:Structure">
+	  <opc:Description>DataType for RequestLock automation responses</opc:Description>
+	  <opc:Fields>
+		  <opc:Field Name="MethodResult" DataType="MethodResultEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Response result</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ResponseDescription" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+			  <opc:Description>Response description</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ErrorLevel" DataType="ErrorLevelEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Error level</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="LockState" DataType="LockStateEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Lock State</opc:Description>
+		  </opc:Field>
+	  </opc:Fields>
+  </opc:DataType>
+
+  <!--VcbResultReleaseLock-->
+  <opc:DataType SymbolicName="VcbResultReleaseLock" BaseType="ua:Structure">
+	  <opc:Description>DataType for ReleaseLock automation responses</opc:Description>
+	  <opc:Fields>
+		  <opc:Field Name="MethodResult" DataType="MethodResultEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Response result</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ResponseDescription" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+			  <opc:Description>Response description</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ErrorLevel" DataType="ErrorLevelEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Error level</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="LockState" DataType="LockStateEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Lock State</opc:Description>
+		  </opc:Field>
+	  </opc:Fields>
+  </opc:DataType>
+
+  <!--VcbResultDeleteCellType-->
+  <opc:DataType SymbolicName="VcbResultDeleteCellType" BaseType="ua:Structure">
+	  <opc:Description>DataType for DeleteCellType automation responses</opc:Description>
+	  <opc:Fields>
+		  <opc:Field Name="MethodResult" DataType="MethodResultEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Response result</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ResponseDescription" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+			  <opc:Description>Response description</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ErrorLevel" DataType="ErrorLevelEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Error level</opc:Description>
+		  </opc:Field>
+	  </opc:Fields>
+  </opc:DataType>
+
+  <!--VcbResultGetQualityControls-->
+  <opc:DataType SymbolicName="VcbResultGetQualityControls" BaseType="ua:Structure">
+	  <opc:Description>DataType for GetQualityControls automation responses</opc:Description>
+	  <opc:Fields>
+		  <opc:Field Name="MethodResult" DataType="MethodResultEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Response result</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ResponseDescription" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+			  <opc:Description>Response description</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ErrorLevel" DataType="ErrorLevelEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Error level</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="QualityControls" DataType="QualityControl" ValueRank="Array" ModellingRule="Mandatory">
+			  <opc:Description>Quality Controls</opc:Description>
+		  </opc:Field>
+	  </opc:Fields>
+  </opc:DataType>
+
+  <!--VcbResultGetDiskSpace-->
+  <opc:DataType SymbolicName="VcbResultGetDiskSpace" BaseType="ua:Structure">
+	  <opc:Description>DataType for GetAvailableDiskSpace automation responses</opc:Description>
+	  <opc:Fields>
+		  <opc:Field Name="MethodResult" DataType="MethodResultEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Response result</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ResponseDescription" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+			  <opc:Description>Response description</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ErrorLevel" DataType="ErrorLevelEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Error level</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="TotalSizeBytes" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Total Disk Space in Bytes</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="TotalFreeBytes" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Free Disk Space in Bytes</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="DiskSpaceOtherBytes" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Used Disk Space by Other Components in Bytes</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="DiskSpaceDataBytes" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Used Disk Space by Data in Bytes</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="DiskSpaceExportBytes" DataType="ua:Double" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Used Disk Space by Export in Bytes</opc:Description>
+		  </opc:Field>
+	  </opc:Fields>
+  </opc:DataType>
+
+  <!--VcbResultEjectStage-->
+  <opc:DataType SymbolicName="VcbResultEjectStage" BaseType="ua:Structure">
+	  <opc:Description>DataType for EjectStage automation responses</opc:Description>
+	  <opc:Fields>
+		  <opc:Field Name="MethodResult" DataType="MethodResultEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Response result</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ResponseDescription" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+			  <opc:Description>Response description</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ErrorLevel" DataType="ErrorLevelEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Error level</opc:Description>
+		  </opc:Field>
+	  </opc:Fields>
+  </opc:DataType>
+
+	<!--VcbResultStartExport-->
+	<opc:DataType SymbolicName="VcbResultStartExport" BaseType="ua:Structure">
+		<opc:Description>Information about the export start request</opc:Description>
+		<opc:Fields>
+			<opc:Field Name="MethodResult" DataType="MethodResultEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+				<opc:Description>Response result</opc:Description>
+			</opc:Field>
+			<opc:Field Name="ResponseDescription" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+				<opc:Description>Response description</opc:Description>
+			</opc:Field>
+			<opc:Field Name="ErrorLevel" DataType="ErrorLevelEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+				<opc:Description>Error level</opc:Description>
+			</opc:Field>
+			<opc:Field Name="BulkDataId" DataType="ua:String" ValueRank="Scalar" ModellingRule="Mandatory">
+				<opc:Description>Temporary Id used to retrieve the data when export is complete</opc:Description>
+			</opc:Field>
+		</opc:Fields>
+	</opc:DataType>
+
+  <opc:DataType SymbolicName="VcbResultRetrieveExportBlock" BaseType="ua:Structure">
+	  <opc:Description>The result from getting an export  data block</opc:Description>
+	  <opc:Fields>
+		  <opc:Field Name="MethodResult" DataType="MethodResultEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Response result</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ResponseDescription" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+			  <opc:Description>Response description</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ErrorLevel" DataType="ErrorLevelEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Error level</opc:Description>
+		  </opc:Field>		  		  
+		  <opc:Field Name="BlockData" DataType="ExportBlockData" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>The block of data</opc:Description>
+		  </opc:Field>		  		  
+	  </opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="VcbResultExportConfig" BaseType="ua:Structure">
+	  <opc:Description>DataType for ExportConfig automation responses</opc:Description>
+	  <opc:Fields>
+		  <opc:Field Name="MethodResult" DataType="MethodResultEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Response result</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ResponseDescription" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+			  <opc:Description>Response description</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ErrorLevel" DataType="ErrorLevelEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Error level</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="FileData" DataType="ua:ByteString" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>File data bytes</opc:Description>
+		  </opc:Field>
+	  </opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="CleanFluidicsStatus" BaseType="ua:Structure">
+	  <opc:Description>DataType for Clean Fluidics Status event</opc:Description>
+	  <opc:Fields>
+		  <opc:Field Name="Status" DataType="CleanFluidicsStatusEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>CleanFluidics status</opc:Description>
+		  </opc:Field>
+	  </opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="PrimeReagentsStatus" BaseType="ua:Structure">
+	  <opc:Description>DataType for Prime Reagents Status event</opc:Description>
+	  <opc:Fields>
+		  <opc:Field Name="Status" DataType="PrimeReagentsStatusEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Prime Reagents status</opc:Description>
+		  </opc:Field>
+	  </opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="PurgeReagentsStatus" BaseType="ua:Structure">
+	  <opc:Description>DataType for Purge Reagents Status event</opc:Description>
+	  <opc:Fields>
+		  <opc:Field Name="Status" DataType="PurgeReagentsStatusEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Purge Reagents status</opc:Description>
+		  </opc:Field>
+	  </opc:Fields>
+  </opc:DataType>
+
+	<opc:DataType SymbolicName="DecontaminateStatus" BaseType="ua:Structure">
+		<opc:Description>DataType for Decontaminate Status event</opc:Description>
+		<opc:Fields>
+			<opc:Field Name="Status" DataType="DecontaminateStatusEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+				<opc:Description>Decontaminate status</opc:Description>
+			</opc:Field>
+		</opc:Fields>
+	</opc:DataType>
+
+  <opc:DataType SymbolicName="CellHealthFluidType" BaseType="ua:Structure">
+	  <opc:Description>DataType for Get/Set/Add reagent volume methods</opc:Description>
+	  <opc:Fields>
+		  <opc:Field Name="Type" DataType="CellHealthFluidTypeEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>CellHealth reagent fluid type</opc:Description>
+		  </opc:Field>
+	  </opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="ErrorStatusType" BaseType="ua:Structure">
+    <opc:Description>DataType for ErrorStatus</opc:Description>
+	  <opc:Fields>
+		  <opc:Field Name="ErrorCode" DataType="ua:String" ValueRank="Scalar"/>
+		  <opc:Field Name="Severity" DataType="ua:String" ValueRank="Scalar"/>
+		  <opc:Field Name="System" DataType="ua:String" ValueRank="Scalar"/>
+		  <opc:Field Name="SubSystem" DataType="ua:String" ValueRank="Scalar"/>
+		  <opc:Field Name="Instance" DataType="ua:String" ValueRank="Scalar"/>
+		  <opc:Field Name="FailureMode" DataType="ua:String" ValueRank="Scalar"/>
+	  </opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="VcbResultReagentVolume" BaseType="ua:Structure">
+	  <opc:Description>DataType for GetReagentVolume</opc:Description>
+	  <opc:Fields>
+		  <opc:Field Name="MethodResult" DataType="MethodResultEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Response result</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ResponseDescription" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
+			  <opc:Description>Response description</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="ErrorLevel" DataType="ErrorLevelEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Error level</opc:Description>
+		  </opc:Field>
+		  <opc:Field Name="Volume" DataType="ua:Int32" ValueRank="Scalar" ModellingRule="Mandatory">
+			  <opc:Description>Reagent volume in uL</opc:Description>
+		  </opc:Field>
+	  </opc:Fields>
+  </opc:DataType>
+
+
+<!--### Enumeration Data Types ###-->
+  <opc:DataType SymbolicName="ViCellStatusEnum" BaseType="ua:Enumeration">
+    <opc:Fields>
+      <opc:Field Name="Idle" DataType="ua:Int32" Identifier="0"/>
+      <opc:Field Name="Running" DataType="ua:Int32" Identifier="1"/>
+      <opc:Field Name="Pausing" DataType="ua:Int32" Identifier="2"/>
+      <opc:Field Name="Paused" DataType="ua:Int32" Identifier="3"/>
+      <opc:Field Name="Stopping" DataType="ua:Int32" Identifier="4"/>
+      <opc:Field Name="Stopped" DataType="ua:Int32" Identifier="5"/>
+      <opc:Field Name="Faulted" DataType="ua:Int32" Identifier="6"/>
+      <opc:Field Name="SearchingForTubes" DataType="ua:Int32" Identifier="7"/>
+      <opc:Field Name="NightlyClean" DataType="ua:Int32" Identifier="8"/>
+    </opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="ErrorLevelEnum" BaseType="ua:Enumeration">
+    <opc:Fields>
+      <opc:Field Name="NoError" DataType="ua:Int32" Identifier="0"/>
+      <opc:Field Name="Error" DataType="ua:Int32" Identifier="1"/>
+      <opc:Field Name="Warning" DataType="ua:Int32" Identifier="2"/>
+      <opc:Field Name="RequiresUserInteraction" DataType="ua:Int32" Identifier="3"/>
+    </opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="WashTypeEnum" BaseType="ua:Enumeration">
+    <opc:Fields>
+      <opc:Field Name="NormalWash" DataType="ua:Int32" Identifier="0"/>
+      <opc:Field Name="FastWash" DataType="ua:Int32" Identifier="1"/>
+    </opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="QcStatusEnum" BaseType="ua:Enumeration">
+	<opc:Fields>
+		<opc:Field Name="Fail" DataType="ua:UInt16" Identifier="0"/>
+		<opc:Field Name="Pass" DataType="ua:UInt16" Identifier="1"/>
+		<opc:Field Name="NotApplicable" DataType="ua:UInt16" Identifier="2"/>
+	</opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="LockStateEnum" BaseType="ua:Enumeration">
+    <opc:Fields>
+      <opc:Field Name="Locked" DataType="ua:Int32" Identifier="0"/>
+      <opc:Field Name="Unlocked" DataType="ua:Int32" Identifier="1"/>
+    </opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="StageStateEnum" BaseType="ua:Enumeration">
+    <opc:Fields>
+      <opc:Field Name="Ejected" DataType="ua:Int32" Identifier="0"/>
+      <opc:Field Name="Closed" DataType="ua:Int32" Identifier="1"/>
+    </opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="MethodResultEnum" BaseType="ua:Enumeration">
+    <opc:Fields>
+      <opc:Field Name="Failure" DataType="ua:Int32" Identifier="0"/>
+      <opc:Field Name="Success" DataType="ua:Int32" Identifier="1"/>
+    </opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="AssayParameterEnum" BaseType="ua:Enumeration">
+    <opc:Fields>
+      <opc:Field Name="Concentration" DataType="ua:Int32" Identifier="0"/>
+      <opc:Field Name="PopulationPercentage" DataType="ua:Int32" Identifier="1"/>
+      <opc:Field Name="Size" DataType="ua:Int32" Identifier="2"/>
+    </opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="CurrentInstrumentCarrierEnum" BaseType="ua:Enumeration">
+    <opc:Fields>
+      <opc:Field Name="Carousel" DataType="ua:Int32" Identifier="0"/>
+      <opc:Field Name="Plate" DataType="ua:Int32" Identifier="1"/>
+    </opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="FilterOnEnum" BaseType="ua:Enumeration">
+    <opc:Fields>
+      <opc:Field Name="SampleSet" DataType="ua:Int32" Identifier="0"/>
+      <opc:Field Name="Sample" DataType="ua:Int32" Identifier="1"/>
+    </opc:Fields>
+  </opc:DataType>
+
+	  <opc:DataType SymbolicName="GetBlockStateEnum" BaseType="ua:Enumeration">
+    <opc:Fields>
+		<opc:Field Name="GetBlockUnknown" DataType="ua:Int32" Identifier="0"/>
+		<opc:Field Name="GetBlockError" DataType="ua:Int32" Identifier="1"/>
+      <opc:Field Name="GetBlockBadIndex" DataType="ua:Int32" Identifier="2"/>
+      <opc:Field Name="GetBlockSuccess" DataType="ua:Int32" Identifier="3"/>
+      <opc:Field Name="GetBlockDone" DataType="ua:Int32" Identifier="4"/>
+    </opc:Fields>
+  </opc:DataType>
+	
+  <opc:DataType SymbolicName="DeclusterDegreeEnum" BaseType="ua:Enumeration">
+    <opc:Fields>
+      <opc:Field Name="None" DataType="ua:Int32" Identifier="0"/>
+      <opc:Field Name="Low" DataType="ua:Int32" Identifier="1"/>
+      <opc:Field Name="Medium" DataType="ua:Int32" Identifier="2"/>
+      <opc:Field Name="High" DataType="ua:Int32" Identifier="3"/>
+    </opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="PlatePrecessionEnum" BaseType="ua:Enumeration">
+    <opc:Fields>
+      <opc:Field Name="RowMajor" DataType="ua:Int32" Identifier="0"/>
+      <opc:Field Name="ColumnMajor" DataType="ua:Int32" Identifier="1"/>
+    </opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="SampleStatusEnum" BaseType="ua:Enumeration">
+    <opc:Fields>
+      <opc:Field Name="NotProcessed" DataType="ua:Int32" Identifier="0"/>
+      <opc:Field Name="InProcessAspirating" DataType="ua:Int32" Identifier="1"/>
+      <opc:Field Name="InProcessMixing" DataType="ua:Int32" Identifier="2"/>
+      <opc:Field Name="InProcessImageAcquisition" DataType="ua:Int32" Identifier="3"/>
+      <opc:Field Name="InProcessCleaning" DataType="ua:Int32" Identifier="4"/>
+      <opc:Field Name="AcquisitionComplete" DataType="ua:Int32" Identifier="5"/>
+      <opc:Field Name="Completed" DataType="ua:Int32" Identifier="6"/>
+      <opc:Field Name="SkipManual" DataType="ua:Int32" Identifier="7"/>
+      <opc:Field Name="SkipError" DataType="ua:Int32" Identifier="8"/>
+    </opc:Fields>
+  </opc:DataType>
+
+	<opc:DataType SymbolicName="DeleteStatusEnum" BaseType="ua:Enumeration">
+		<opc:Fields>
+			<opc:Field Name="Unknown" DataType="ua:Int32" Identifier="0"/>
+			<opc:Field Name="Failed" DataType="ua:Int32" Identifier="1"/>
+			<opc:Field Name="Deleting" DataType="ua:Int32" Identifier="2"/>
+			<opc:Field Name="Done" DataType="ua:Int32" Identifier="3"/>
+		</opc:Fields>
+	</opc:DataType>
+
+	<opc:DataType SymbolicName="ExportStatusEnum" BaseType="ua:Enumeration">
+		<opc:Fields>
+			<opc:Field Name="Unknown" DataType="ua:Int16" Identifier="0"/>
+			<opc:Field Name="Failed" DataType="ua:Int16" Identifier="1"/>
+			<opc:Field Name="Collecting" DataType="ua:Int16" Identifier="2"/>
+			<opc:Field Name="Ready" DataType="ua:Int16" Identifier="3"/>
+		</opc:Fields>
+	</opc:DataType>
+
+	<opc:DataType SymbolicName="ExportTypeEnum" BaseType="ua:Enumeration">
+		<opc:Fields>
+			<opc:Field Name="Csv" DataType="ua:Int16" Identifier="0"/>
+			<opc:Field Name="Offline" DataType="ua:Int16" Identifier="1"/>
+		</opc:Fields>
+	</opc:DataType>
+
+	<opc:DataType SymbolicName="ExportImagesEnum" BaseType="ua:Enumeration">
+		<opc:Fields>
+			<opc:Field Name="All" DataType="ua:Int16" Identifier="0"/>
+			<opc:Field Name="FirstAndLastOnly" DataType="ua:Int16" Identifier="1"/>
+			<opc:Field Name="NthImage" DataType="ua:Int16" Identifier="2"/>
+		</opc:Fields>
+	</opc:DataType>
+
+	<opc:DataType SymbolicName="CleanFluidicsStatusEnum" BaseType="ua:Enumeration">
+	  <opc:Fields>
+		  <opc:Field Name="Idle" DataType="ua:Int16" Identifier="0"/>
+		  <opc:Field Name="FlushingCleaner" DataType="ua:Int16" Identifier="1"/>
+		  <opc:Field Name="FlushingConditioningSolution" DataType="ua:Int16" Identifier="2"/>
+		  <opc:Field Name="FlushingBuffer" DataType="ua:Int16" Identifier="3"/>
+		  <opc:Field Name="FlushingAir" DataType="ua:Int16" Identifier="4"/>
+		  <opc:Field Name="Completed" DataType="ua:Int16" Identifier="5"/>
+		  <opc:Field Name="Failed" DataType="ua:Int16" Identifier="6"/>
+	  </opc:Fields>
+	</opc:DataType>
+
+  <opc:DataType SymbolicName="CellHealthFluidTypeEnum" BaseType="ua:Enumeration">
+	  <opc:Fields>
+		  <opc:Field Name="Unknown" DataType="ua:Int16" Identifier="0"/>
+		  <opc:Field Name="TrypanBlue" DataType="ua:Int16" Identifier="1"/>
+		  <opc:Field Name="Cleaner" DataType="ua:Int16" Identifier="2"/>
+		  <opc:Field Name="ConditioningSolution" DataType="ua:Int16" Identifier="3"/>
+		  <opc:Field Name="Buffer" DataType="ua:Int16" Identifier="4"/>
+		  <opc:Field Name="Diluent" DataType="ua:Int16" Identifier="5"/>
+	  </opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="ShutdownOrRebootEnum" BaseType="ua:Enumeration">
+	  <opc:Fields>
+		  <opc:Field Name="Shutdown" DataType="ua:Int16" Identifier="0"/>
+		  <opc:Field Name="Reboot" DataType="ua:Int16" Identifier="1"/>
+	  </opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="PrimeReagentsStatusEnum" BaseType="ua:Enumeration">
+	<opc:Fields>
+		<opc:Field Name="Idle" DataType="ua:Int32" Identifier="0"/>
+		<opc:Field Name="PrimeCleaner" DataType="ua:Int32" Identifier="1"/>
+		<opc:Field Name="PrimeConditioningSolution" DataType="ua:Int32" Identifier="2"/>
+		<opc:Field Name="PrimeBufferSolution" DataType="ua:Int32" Identifier="3"/>
+		<opc:Field Name="PrimeTrypanBlue" DataType="ua:Int32" Identifier="4"/>
+		<opc:Field Name="PrimeDiluent" DataType="ua:Int32" Identifier="5"/>
+		<opc:Field Name="Completed" DataType="ua:Int16" Identifier="6"/>
+		<opc:Field Name="Failed" DataType="ua:Int16" Identifier="7"/>
+	</opc:Fields>
+  </opc:DataType>
+
+  <opc:DataType SymbolicName="PurgeReagentsStatusEnum" BaseType="ua:Enumeration">
+	<opc:Fields>
+		<opc:Field Name="Idle" DataType="ua:Int32" Identifier="0"/>
+		<opc:Field Name="PurgeCleaner" DataType="ua:Int32" Identifier="1"/>
+		<opc:Field Name="PurgeConditioningSolution" DataType="ua:Int32" Identifier="2"/>
+		<opc:Field Name="PurgeBufferSolution" DataType="ua:Int32" Identifier="3"/>
+		<opc:Field Name="PurgeTrypanBlue" DataType="ua:Int32" Identifier="4"/>
+		<opc:Field Name="PurgeDiluent" DataType="ua:Int32" Identifier="5"/>
+		<opc:Field Name="Completed" DataType="ua:Int16" Identifier="6"/>
+		<opc:Field Name="Failed" DataType="ua:Int16" Identifier="7"/>
+	</opc:Fields>
+  </opc:DataType>
+
+<opc:DataType SymbolicName="DecontaminateStatusEnum" BaseType="ua:Enumeration">
+	<opc:Fields>
+		<opc:Field Name="Idle" DataType="ua:Int32" Identifier="0"/>
+		<opc:Field Name="AspiratingBleach" DataType="ua:Int32" Identifier="1"/>
+		<opc:Field Name="Dispensing1" DataType="ua:Int32" Identifier="2"/>
+		<opc:Field Name="DecontaminateDelay" DataType="ua:Int32" Identifier="3"/>
+		<opc:Field Name="Dispensing2" DataType="ua:Int32" Identifier="4"/>
+		<opc:Field Name="FlushingBuffer" DataType="ua:Int32" Identifier="5"/>
+		<opc:Field Name="FlushingAir" DataType="ua:Int32" Identifier="6"/>
+		<opc:Field Name="Completed" DataType="ua:Int16" Identifier="7"/>
+		<opc:Field Name="Failed" DataType="ua:Int16" Identifier="8"/>
+		<opc:Field Name="FindingTube" DataType="ua:Int16" Identifier="9"/>
+		<opc:Field Name="Complete" DataType="ua:Int16" Identifier="10"/>
+		<opc:Field Name="Cancelled" DataType="ua:Int16" Identifier="11"/>
+	</opc:Fields>
+</opc:DataType>
+
+
+<!--### Events ##############################################-->
+  <opc:ObjectType SymbolicName="BecEvent" BaseType="ua:SystemEventType">
+	  <opc:Description>An event raised when a BEC Event occurs.</opc:Description>
+	  <opc:Children>
+		  <opc:Object SymbolicName="AutomationResponse" DataType="VcbResult" ValueRank="Scalar" />
+	  </opc:Children>
+  </opc:ObjectType>
+
+	<opc:ObjectType SymbolicName="SampleCompleteEvent" BaseType="BecEvent">
+    <opc:Description>Event raised when a sample has completed processing</opc:Description>
+    <opc:Children>
+      <opc:Property SymbolicName="SampleResult" DataType="SampleResult" ValueRank="Scalar" />
+    </opc:Children>
+  </opc:ObjectType>
+
+  <opc:ObjectType SymbolicName="SampleStatusChangedEvent" BaseType="BecEvent">
+    <opc:Description>Event raised when a sample in processing has changed its status</opc:Description>
+    <opc:Children>
+      <opc:Property SymbolicName="SampleStatusData" DataType="SampleStatusData" ValueRank="Scalar" />
+    </opc:Children>
+  </opc:ObjectType>
+
+  <opc:ObjectType SymbolicName="WorkListCompleteEvent" BaseType="BecEvent">
+    <opc:Description>Event raised when a work list of samples has completed processing</opc:Description>
+    <opc:Children>
+      <opc:Property SymbolicName="SampleDataUuidList" DataType="ua:Guid"  ValueRank="Array" />
+    </opc:Children>
+  </opc:ObjectType>
+
+  <opc:ObjectType SymbolicName="PauseCompleteEvent" BaseType="BecEvent">
+    <opc:Description>Event raised when a work list of samples has paused processing</opc:Description>
+  </opc:ObjectType>
+
+  <opc:ObjectType SymbolicName="StopCompleteEvent" BaseType="BecEvent">
+    <opc:Description>Event raised when a work list of samples has stopped processing</opc:Description>
+  </opc:ObjectType>
+
+  <opc:ObjectType SymbolicName="DeleteSampleResultsProgressEvent" BaseType="BecEvent">
+    <opc:Description>Event raised when a Sample Result has been deleted from desired list.</opc:Description>
+	  <opc:Children>
+		  <opc:Property SymbolicName="DeleteStatusInfo" DataType="DeleteSampleStatus" ValueRank="Scalar" />
+	  </opc:Children>
+  </opc:ObjectType>
+
+  <opc:ObjectType SymbolicName="SystemErrorEvent" BaseType="BecEvent">
+    <opc:Description>Event raised when a system error has occurred. System Errors mean analysis is stopped due to system failure.</opc:Description>
+  </opc:ObjectType>
+
+  <opc:ObjectType SymbolicName="SystemWarningEvent" BaseType="BecEvent">
+    <opc:Description>Event raised when a system warning has occurred. System Warnings mean analysis can continue without user interaction.</opc:Description>
+  </opc:ObjectType>
+
+  <opc:ObjectType SymbolicName="SystemWarningUserInterventionRequiredEvent" BaseType="BecEvent">
+    <opc:Description>Event raised when a system warning has occurred and user interaction is required before continuing.</opc:Description>
+  </opc:ObjectType>
+
+  <opc:ObjectType SymbolicName="LockStateChangedEvent" BaseType="BecEvent">
+    <opc:Description>Event raised when a system warning has occurred and user interaction is required before continuing.</opc:Description>
+    <opc:Children>
+      <opc:Property SymbolicName="LockState" DataType="LockStateEnum" ValueRank="Scalar" />
+    </opc:Children>
+  </opc:ObjectType>
+
+  <opc:ObjectType SymbolicName="ViCellStatusChangedEvent" BaseType="BecEvent">
+    <opc:Description>Event raised when the ViCell status has changed.</opc:Description>
+    <opc:Children>
+      <opc:Property SymbolicName="ViCellStatus" DataType="ViCellStatusEnum" ValueRank="Scalar" />
+    </opc:Children>
+  </opc:ObjectType>
+
+  <opc:ObjectType SymbolicName="CellTypesChangedEvent" BaseType="BecEvent">
+    <opc:Description>Event raised when the cell types have changed.</opc:Description>
+    <opc:Children>
+      <opc:Property SymbolicName="CellTypes" DataType="CellType" ValueRank="Array" />
+    </opc:Children>
+  </opc:ObjectType>
+
+  <opc:ObjectType SymbolicName="ViCellIdentifierChangedEvent" BaseType="BecEvent">
+    <opc:Description>Event raised when the ViCell Identification string has changed.</opc:Description>
+    <opc:Children>
+      <opc:Property SymbolicName="ViCellIdentifier" DataType="ua:String" ValueRank="Scalar" />
+    </opc:Children>
+  </opc:ObjectType>
+
+  <opc:ObjectType SymbolicName="ReagentUsesRemainingChangedEvent" BaseType="BecEvent">
+    <opc:Description>Event raised when the Reagent Remaining Uses has changed.</opc:Description>
+    <opc:Children>
+      <opc:Property SymbolicName="ReagentUsesRemaining" DataType="ua:Int32" ValueRank="Scalar" />
+    </opc:Children>
+  </opc:ObjectType>
+
+  <opc:ObjectType SymbolicName="WasteTubeRemainingCapacityChangedEvent" BaseType="BecEvent">
+    <opc:Description>Event raised when the waste tube remaining capacity has changed.</opc:Description>
+    <opc:Children>
+      <opc:Property SymbolicName="WasteTubeRemainingCapacity" DataType="ua:Int32" ValueRank="Scalar" />
+    </opc:Children>
+  </opc:ObjectType>
+
+  <opc:ObjectType SymbolicName="DiskSpaceAvailableChangedEvent" BaseType="BecEvent">
+    <opc:Description>Event raised when the available disk space has changed.</opc:Description>
+    <opc:Children>
+      <opc:Property SymbolicName="DiskSpaceAvailable" DataType="ua:Int32" ValueRank="Scalar" />
+    </opc:Children>
+  </opc:ObjectType>
+	
+  <opc:ObjectType SymbolicName="ExportStatusEvent" BaseType="BecEvent">
+    <opc:Description>Indicates the status of an export</opc:Description>
+    <opc:Children>
+		<opc:Property SymbolicName="ExportStatusData" DataType="ExportStatusData" ValueRank="Scalar" />
+    </opc:Children>
+  </opc:ObjectType>
+
+  <opc:ObjectType SymbolicName="CleanFluidicsStatusEvent" BaseType="BecEvent">
+	  <opc:Description>Indicates the status of Decontamination</opc:Description>
+	  <opc:Children>
+		  <opc:Property SymbolicName="CleanFluidicsStatus" DataType="CleanFluidicsStatus" ValueRank="Scalar" />
+	  </opc:Children>
+  </opc:ObjectType>
+
+	<opc:ObjectType SymbolicName="PrimeReagentsStatusEvent" BaseType="BecEvent">
+		<opc:Description>Indicates the status of Priming Reagents</opc:Description>
+		<opc:Children>
+			<opc:Property SymbolicName="PrimeReagentsStatus" DataType="PrimeReagentsStatus" ValueRank="Scalar" />
+		</opc:Children>
+	</opc:ObjectType>
+
+	<opc:ObjectType SymbolicName="PurgeReagentsStatusEvent" BaseType="BecEvent">
+		<opc:Description>Indicates the status of Purging Reagents</opc:Description>
+		<opc:Children>
+			<opc:Property SymbolicName="PurgeReagentsStatus" DataType="PurgeReagentsStatus" ValueRank="Scalar" />
+		</opc:Children>
+	</opc:ObjectType>
+
+	<opc:ObjectType SymbolicName="DecontaminateStatusEvent" BaseType="BecEvent">
+		<opc:Description>Indicates the status of Decontaminate</opc:Description>
+		<opc:Children>
+			<opc:Property SymbolicName="DecontaminateStatus" DataType="DecontaminateStatus" ValueRank="Scalar" />
+		</opc:Children>
+	</opc:ObjectType>
+
+	<opc:ObjectType SymbolicName="SoftwareVersionChangedEvent" BaseType="BecEvent">
+		<opc:Description>Event raised when the ViCell software version has changed.</opc:Description>
+		<opc:Children>
+			<opc:Property SymbolicName="SoftwareVersion" DataType="ua:String" ValueRank="Scalar" />
+		</opc:Children>
+	</opc:ObjectType>
+
+	<opc:ObjectType SymbolicName="FirmwareVersionChangedEvent" BaseType="BecEvent">
+		<opc:Description>Event raised when the ViCell firmware version has changed.</opc:Description>
+		<opc:Children>
+			<opc:Property SymbolicName="FirmwareVersion" DataType="ua:String" ValueRank="Scalar" />
+		</opc:Children>
+	</opc:ObjectType>
+
+	<opc:ObjectType SymbolicName="ErrorStatusEvent" BaseType="BecEvent">
+	   <opc:Description>Event raised when errors have occurred</opc:Description>
+		<opc:Children>
+			<opc:Property SymbolicName="Status" DataType="ErrorStatusType" ValueRank="Scalar" />
+		</opc:Children>
+	</opc:ObjectType>
+
+<!--### Objects ###-->
+  <opc:Object SymbolicName="ViCellBluState" SupportsEvents="true" ModellingRule="Mandatory">
+    <opc:DisplayName>ViCell BLU</opc:DisplayName>
+    <opc:BrowseName>ViCellBluStateObject</opc:BrowseName>
+    <opc:Description>The current status of the Vi-Cell BLU</opc:Description>
+
+    <opc:Children>
+      <opc:Property SymbolicName="ViCellIdentifier" DataType="ua:String" ModellingRule="Mandatory">
+        <opc:DisplayName>ViCell BLU Identifier</opc:DisplayName>
+      </opc:Property>
+      <opc:Property SymbolicName="ViCellStatus" DataType="ViCellStatusEnum" ModellingRule="Mandatory">
+        <opc:DisplayName>ViCell BLU Status</opc:DisplayName>
+      </opc:Property>
+      <opc:Property SymbolicName="LockState" DataType="LockStateEnum" ModellingRule="Mandatory">
+        <opc:DisplayName>Automation Lock State</opc:DisplayName>
+      </opc:Property>
+      <opc:Property SymbolicName="ReagentUsesRemaining" DataType="ua:UInt32" ModellingRule="Mandatory">
+        <opc:DisplayName>Reagent Uses Remaining</opc:DisplayName>
+      </opc:Property>
+      <opc:Property SymbolicName="WasteTubeRemainingCapacity" DataType="ua:UInt32" ModellingRule="Mandatory">
+        <opc:DisplayName>Waste Tube Remaining Capacity</opc:DisplayName>
+      </opc:Property>
+     <opc:Property SymbolicName="SoftwareVersion" DataType="ua:String" ModellingRule="Mandatory">
+        <opc:DisplayName>Software Version</opc:DisplayName>
+      </opc:Property>
+      <opc:Property SymbolicName="FirmwareVersion" DataType="ua:String" ModellingRule="Mandatory">
+		 <opc:DisplayName>Firmware Version</opc:DisplayName>
+      </opc:Property>
+      <opc:Object SymbolicName="Methods" TypeDefinition="MethodFolderType" ModellingRule="Mandatory"/>
+      <opc:Object SymbolicName="PlayControl" TypeDefinition="PlayControlFolderType" ModellingRule="Mandatory"/>
+    </opc:Children>
+
+    <!-- Link the instance back to the ObjectsFolder -->
+    <opc:References>
+      <opc:Reference IsInverse="true">
+        <opc:ReferenceType>ua:Organizes</opc:ReferenceType>
+        <opc:TargetId>ua:ObjectsFolder</opc:TargetId>
+      </opc:Reference>
+    </opc:References>
+
+  </opc:Object>
+
+<!--### Method Types ########################################-->
+  <opc:ObjectType SymbolicName="PlayControlFolderType" BaseType="ua:FolderType" ModellingRule="Mandatory">
+	  <opc:Children>
+		  <opc:Method SymbolicName="StartSample" TypeDefinition="StartSample" ModellingRule="Mandatory"/>
+		  <opc:Method SymbolicName="StartSampleSet" TypeDefinition="StartSampleSet" ModellingRule="Mandatory"/>
+		  <opc:Method SymbolicName="Pause" TypeDefinition="Pause" ModellingRule="Mandatory"/>
+		  <opc:Method SymbolicName="Resume" TypeDefinition="Resume" ModellingRule="Mandatory"/>
+		  <opc:Method SymbolicName="Stop" TypeDefinition="Stop" ModellingRule="Mandatory"/>
+		  <opc:Method SymbolicName="EjectStage" TypeDefinition="EjectStage" ModellingRule="Mandatory"/>
+	  </opc:Children>
+  </opc:ObjectType>
+
+  <opc:ObjectType SymbolicName="MethodFolderType" BaseType="ua:FolderType" ModellingRule="Mandatory">
+    <opc:Children>
+      <opc:Method SymbolicName="RequestLock" TypeDefinition="RequestLock" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="ReleaseLock" TypeDefinition="ReleaseLock" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="GetSampleResults" TypeDefinition="GetSampleResults" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="DeleteSampleResults" TypeDefinition="DeleteSampleResults" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="CreateCellType" TypeDefinition="CreateCellType" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="DeleteCellType" TypeDefinition="DeleteCellType" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="CreateQualityControl" TypeDefinition="CreateQualityControl" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="ModifyQualityControl" TypeDefinition="ModifyQualityControl" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="ImportConfig" TypeDefinition="ImportConfig" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="ExportConfig" TypeDefinition="ExportConfig" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="StartExport" TypeDefinition="StartExport" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="RetrieveExportDataBlock" TypeDefinition="RetrieveExportDataBlock" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="GetCellTypes" TypeDefinition="GetCellTypes" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="GetQualityControls" TypeDefinition="GetQualityControls" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="GetAvailableDiskSpace" TypeDefinition="GetAvailableDiskSpace" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="CleanFluidics" TypeDefinition="CleanFluidics" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="GetReagentVolume" TypeDefinition="GetReagentVolume" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="SetReagentVolume" TypeDefinition="SetReagentVolume" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="AddReagentVolume" TypeDefinition="AddReagentVolume" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="ShutdownOrReboot" TypeDefinition="ShutdownOrReboot" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="DeleteCampaignData" TypeDefinition="DeleteCampaignData" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="StartLogDataExport" TypeDefinition="StartLogDataExport" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="PrimeReagents" TypeDefinition="PrimeReagents" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="CancelPrimeReagents" TypeDefinition="CancelPrimeReagents" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="PurgeReagents" TypeDefinition="PurgeReagents" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="CancelPurgeReagents" TypeDefinition="CancelPurgeReagents" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="Decontaminate" TypeDefinition="Decontaminate" ModellingRule="Mandatory"/>
+      <opc:Method SymbolicName="CancelDecontaminate" TypeDefinition="CancelDecontaminate" ModellingRule="Mandatory"/>
+	</opc:Children>
+  </opc:ObjectType>
+
+  <opc:Method SymbolicName="RequestLock">
+    <opc:OutputArguments>
+      <opc:Argument Name="MethodResult" DataType="VcbResultRequestLock" ValueRank="Scalar">
+        <opc:Description>The result of the method called</opc:Description>
+      </opc:Argument>
+    </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="ReleaseLock" ModellingRule="Mandatory">
+    <opc:OutputArguments>
+      <opc:Argument Name="MethodResult" DataType="VcbResultReleaseLock" ValueRank="Scalar">
+        <opc:Description>The result of the method called</opc:Description>
+      </opc:Argument>
+    </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="StartSample" ModellingRule="Mandatory">
+    <opc:InputArguments>
+      <opc:Argument Name="SampleToRun" DataType="SampleConfig" ValueRank="Scalar">
+        <opc:Description>The sample to run</opc:Description>
+      </opc:Argument>
+    </opc:InputArguments>
+    <opc:OutputArguments>
+      <opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+        <opc:Description>The result of the method called</opc:Description>
+      </opc:Argument>
+    </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="StartSampleSet" ModellingRule="Mandatory">
+    <opc:InputArguments>
+      <opc:Argument Name="SampleSetToRun" DataType="SampleSet" ValueRank="Scalar">
+        <opc:Description>The sample set containing the samples to run</opc:Description>
+      </opc:Argument>
+    </opc:InputArguments>
+    <opc:OutputArguments>
+      <opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+        <opc:Description>The result of the method called</opc:Description>
+      </opc:Argument>
+    </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="Pause" ModellingRule="Mandatory">
+    <opc:OutputArguments>
+      <opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+        <opc:Description>The result of the method called</opc:Description>
+      </opc:Argument>
+    </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="Resume" ModellingRule="Mandatory">
+    <opc:OutputArguments>
+      <opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+        <opc:Description>The result of the method called</opc:Description>
+      </opc:Argument>
+    </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="Stop" ModellingRule="Mandatory">
+    <opc:OutputArguments>
+      <opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+        <opc:Description>The result of the method called</opc:Description>
+      </opc:Argument>
+    </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="EjectStage" ModellingRule="Mandatory">
+    <opc:OutputArguments>
+      <opc:Argument Name="MethodResult" DataType="VcbResultEjectStage" ValueRank="Scalar">
+        <opc:Description>The result of the method called</opc:Description>
+      </opc:Argument>
+    </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="DeleteSampleResults" ModellingRule="Mandatory">
+    <opc:InputArguments>
+      <opc:Argument Name="SampleResultUuids" DataType="ua:Guid" ValueRank="Array">
+        <opc:Description>The UUIDs for the sample results to delete</opc:Description>
+      </opc:Argument>
+      <opc:Argument Name="RetainResultsAndFirstImage" DataType="ua:Boolean" ValueRank="Scalar">
+        <opc:Description>Delete the sample result images except the first image</opc:Description>
+      </opc:Argument>
+    </opc:InputArguments>
+    <opc:OutputArguments>
+      <opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+        <opc:Description>The result of the method called</opc:Description>
+      </opc:Argument>
+    </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="CreateCellType" ModellingRule="Mandatory">
+    <opc:InputArguments>
+      <opc:Argument Name="Cell" DataType="CellType" ValueRank="Scalar">
+        <opc:Description></opc:Description>
+      </opc:Argument>
+    </opc:InputArguments>
+    <opc:OutputArguments>
+      <opc:Argument Name="MethodResult" DataType="VcbResultCreateCellType" ValueRank="Scalar">
+        <opc:Description>The result of the method called</opc:Description>
+      </opc:Argument>
+    </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="DeleteCellType" ModellingRule="Mandatory">
+    <opc:InputArguments>
+      <opc:Argument Name="CellTypeName" DataType="ua:String" ValueRank="Scalar">
+        <opc:Description></opc:Description>
+      </opc:Argument>
+    </opc:InputArguments>
+    <opc:OutputArguments>
+      <opc:Argument Name="MethodResult" DataType="VcbResultDeleteCellType" ValueRank="Scalar">
+        <opc:Description>The result of the method called</opc:Description>
+      </opc:Argument>
+    </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="CreateQualityControl" ModellingRule="Mandatory">
+    <opc:InputArguments>
+      <opc:Argument Name="QualityControlObject" DataType="QualityControl" ValueRank="Scalar">
+        <opc:Description></opc:Description>
+      </opc:Argument>
+    </opc:InputArguments>
+    <opc:OutputArguments>
+      <opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+        <opc:Description>The result of the method called</opc:Description>
+      </opc:Argument>
+    </opc:OutputArguments>
+  </opc:Method>
+
+    <opc:Method SymbolicName="ModifyQualityControl" ModellingRule="Mandatory">
+    <opc:InputArguments>
+      <opc:Argument Name="QualityControlObject" DataType="QualityControl" ValueRank="Scalar">
+        <opc:Description></opc:Description>
+      </opc:Argument>
+    </opc:InputArguments>
+    <opc:OutputArguments>
+      <opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+        <opc:Description>The result of the method called</opc:Description>
+      </opc:Argument>
+    </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="ImportConfig" ModellingRule="Mandatory">
+    <opc:InputArguments>
+      <opc:Argument Name="FileData" DataType="ua:ByteString" ValueRank="Scalar">
+        <opc:Description></opc:Description>
+      </opc:Argument>
+    </opc:InputArguments>
+    <opc:OutputArguments>
+      <opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+        <opc:Description>The result of the method called</opc:Description>
+      </opc:Argument>
+    </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="ExportConfig" ModellingRule="Mandatory">
+    <opc:OutputArguments>
+      <opc:Argument Name="MethodResult" DataType="VcbResultExportConfig" ValueRank="Scalar">
+        <opc:Description>The result of the method called</opc:Description>
+      </opc:Argument>
+    </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="StartExport" ModellingRule="Mandatory">
+    <opc:InputArguments>
+      <opc:Argument Name="Uuids" DataType="ua:Guid" ValueRank="Array">
+        <opc:Description>List of Sample Result UUIDs</opc:Description>
+      </opc:Argument>
+	  <opc:Argument Name="ExportType" DataType="ExportTypeEnum" ValueRank="Scalar">
+		<opc:Description>Type of export</opc:Description>
+	  </opc:Argument>
+	   <opc:Argument Name="ExportImages" DataType="ExportImagesEnum" ValueRank="Scalar">
+	    <opc:Description>Image export type (all, one, Nth)</opc:Description>
+	  </opc:Argument>
+	  <opc:Argument Name="NthImageToExport" DataType="ua:UInt32" ValueRank="Scalar">
+		<opc:Description>Nth # of images to export</opc:Description>
+	  </opc:Argument>
+	  <opc:Argument Name="IsAutomationExport" DataType="ua:Boolean" ValueRank="Scalar">
+		<opc:Description>Export data thru automation interface</opc:Description>
+	  </opc:Argument>
+	</opc:InputArguments>
+    <opc:OutputArguments>
+      <opc:Argument Name="MethodResult" DataType="VcbResultStartExport" ValueRank="Scalar">
+        <opc:Description>The result of the method called</opc:Description>
+      </opc:Argument>
+    </opc:OutputArguments>
+  </opc:Method>
+
+	<opc:Method SymbolicName="RetrieveExportDataBlock" ModellingRule="Mandatory">
+		<opc:InputArguments>
+			<opc:Argument Name="BulkDataId" DataType="ua:String" ValueRank="Scalar">
+				<opc:Description></opc:Description>
+			</opc:Argument>
+			<opc:Argument Name="BlockIndex" DataType="ua:UInt32" ValueRank="Scalar">
+				<opc:Description>Sample Result UUID</opc:Description>
+			</opc:Argument>
+		</opc:InputArguments>
+		<opc:OutputArguments>
+			<opc:Argument Name="MethodResult" DataType="VcbResultRetrieveExportBlock" ValueRank="Scalar">
+				<opc:Description>The result of the method called</opc:Description>
+			</opc:Argument>
+		</opc:OutputArguments>
+	</opc:Method>
+
+	<opc:Method SymbolicName="GetSampleResults" ModellingRule="Mandatory">
+    <opc:InputArguments>
+	    <opc:Argument Name="Username" DataType="ua:String" ValueRank="Scalar">
+		    <opc:Description></opc:Description>
+	    </opc:Argument>
+	    <opc:Argument Name="FromDate" DataType="ua:DateTime" ValueRank="Scalar">
+        <opc:Description></opc:Description>
+      </opc:Argument>
+      <opc:Argument Name="ToDate" DataType="ua:DateTime" ValueRank="Scalar">
+        <opc:Description></opc:Description>
+      </opc:Argument>
+	    <opc:Argument Name="FilterType" DataType="FilterOnEnum" ValueRank="Scalar">
+		    <opc:Description>The type of object to search/filter on</opc:Description>
+	    </opc:Argument>
+	    <opc:Argument Name="CellTypeQualityControlName" DataType="ua:String" ValueRank="Scalar">
+		    <opc:Description></opc:Description>
+	    </opc:Argument>
+	    <opc:Argument Name="SearchNameString" DataType="ua:String" ValueRank="Scalar">
+        <opc:Description></opc:Description>
+      </opc:Argument>
+      <opc:Argument Name="SearchTagString" DataType="ua:String" ValueRank="Scalar">
+        <opc:Description></opc:Description>
+      </opc:Argument>
+    </opc:InputArguments>
+	<opc:OutputArguments>
+		<opc:Argument Name="MethodResult" DataType="VcbResultGetSampleResults" ValueRank="Scalar">
+		  <opc:Description>The result of the method called</opc:Description>
+		</opc:Argument>
+	</opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="GetCellTypes" ModellingRule="Mandatory">
+	   <opc:OutputArguments>
+	   	<opc:Argument Name="MethodResult" DataType="VcbResultGetCellTypes" ValueRank="Scalar">
+	   		<opc:Description>The result of the method called</opc:Description>
+	   	</opc:Argument>
+	   </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="GetQualityControls" ModellingRule="Mandatory">
+	  <opc:OutputArguments>
+		  <opc:Argument Name="MethodResult" DataType="VcbResultGetQualityControls" ValueRank="Scalar">
+			  <opc:Description>The result of the method called</opc:Description>
+		  </opc:Argument>
+	  </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="GetAvailableDiskSpace" ModellingRule="Mandatory">
+	  <opc:OutputArguments>
+		  <opc:Argument Name="MethodResult" DataType="VcbResultGetDiskSpace" ValueRank="Scalar">
+			  <opc:Description>The result of the method called</opc:Description>
+		  </opc:Argument>
+	  </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="CleanFluidics" ModellingRule="Mandatory">
+	  <opc:OutputArguments>
+		  <opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+			  <opc:Description>The result of the method called</opc:Description>
+		  </opc:Argument>
+	  </opc:OutputArguments>
+  </opc:Method>
+
+	<opc:Method SymbolicName="GetReagentVolume" ModellingRule="Mandatory">
+	  <opc:InputArguments>
+		  <opc:Argument Name="FluidType" DataType="CellHealthFluidTypeEnum" ValueRank="Scalar">
+			  <opc:Description>Fluid type to get volume for</opc:Description>
+		  </opc:Argument>
+	  </opc:InputArguments>
+	  <opc:OutputArguments>
+		  <opc:Argument Name="MethodResult" DataType="VcbResultReagentVolume" ValueRank="Scalar">
+			  <opc:Description>The result of the method called</opc:Description>
+		  </opc:Argument>
+	  </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="SetReagentVolume" ModellingRule="Mandatory">
+	  <opc:InputArguments>
+		  <opc:Argument Name="FluidType" DataType="CellHealthFluidTypeEnum" ValueRank="Scalar">
+			  <opc:Description>Fluid type to get volume for</opc:Description>
+		  </opc:Argument>
+		  <opc:Argument Name="Volume" DataType="ua:Int32" ValueRank="Scalar">
+			  <opc:Description>The result of the method called</opc:Description>
+		  </opc:Argument>
+	  </opc:InputArguments>
+	  <opc:OutputArguments>
+		  <opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+			  <opc:Description>The result of the method called</opc:Description>
+		  </opc:Argument>
+	  </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="AddReagentVolume" ModellingRule="Mandatory">
+	  <opc:InputArguments>
+		  <opc:Argument Name="FluidType" DataType="CellHealthFluidTypeEnum" ValueRank="Scalar">
+			  <opc:Description>Fluid type to get volume for</opc:Description>
+		  </opc:Argument>
+		  <opc:Argument Name="Volume" DataType="ua:Int32" ValueRank="Scalar">
+			  <opc:Description>The result of the method called</opc:Description>
+		  </opc:Argument>
+	  </opc:InputArguments>
+	  <opc:OutputArguments>
+		  <opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+			  <opc:Description>The result of the method called</opc:Description>
+		  </opc:Argument>
+	  </opc:OutputArguments>
+  </opc:Method>
+
+  <opc:Method SymbolicName="ShutdownOrReboot" ModellingRule="Mandatory">
+	  <opc:InputArguments>
+		  <opc:Argument Name="Operation" DataType="ShutdownOrRebootEnum" ValueRank="Scalar">
+			  <opc:Description>Type of operation to perform (shutdown or reboot)</opc:Description>
+		  </opc:Argument>
+	  </opc:InputArguments>
+	  <opc:OutputArguments>
+		  <opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+			  <opc:Description>The result of the method called</opc:Description>
+		  </opc:Argument>
+	  </opc:OutputArguments>
+  </opc:Method>
+
+	<opc:Method SymbolicName="DeleteCampaignData" ModellingRule="Mandatory">
+		<opc:OutputArguments>
+			<opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+				<opc:Description>The result of the method called</opc:Description>
+			</opc:Argument>
+		</opc:OutputArguments>
+	</opc:Method>
+
+	<opc:Method SymbolicName="StartLogDataExport" ModellingRule="Mandatory">
+		<opc:InputArguments>
+			<opc:Argument Name="Filename" DataType="ua:String" ValueRank="Scalar">
+				<opc:Description></opc:Description>
+			</opc:Argument>
+			<opc:Argument Name="FromDate" DataType="ua:DateTime" ValueRank="Scalar">
+				<opc:Description></opc:Description>
+			</opc:Argument>
+			<opc:Argument Name="ToDate" DataType="ua:DateTime" ValueRank="Scalar">
+				<opc:Description></opc:Description>
+			</opc:Argument>
+		</opc:InputArguments>
+		<opc:OutputArguments>
+			<opc:Argument Name="MethodResult" DataType="VcbResultStartExport" ValueRank="Scalar">
+				<opc:Description>The result of the method called</opc:Description>
+			</opc:Argument>
+		</opc:OutputArguments>
+	</opc:Method>
+
+	<opc:Method SymbolicName="PrimeReagents" ModellingRule="Mandatory">
+		<opc:OutputArguments>
+			<opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+				<opc:Description>The result of the method called</opc:Description>
+			</opc:Argument>
+		</opc:OutputArguments>
+	</opc:Method>
+
+	<opc:Method SymbolicName="CancelPrimeReagents" ModellingRule="Mandatory">
+		<opc:OutputArguments>
+			<opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+				<opc:Description>The result of the method called</opc:Description>
+			</opc:Argument>
+		</opc:OutputArguments>
+	</opc:Method>
+
+	<opc:Method SymbolicName="PurgeReagents" ModellingRule="Mandatory">
+		<opc:OutputArguments>
+			<opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+				<opc:Description>The result of the method called</opc:Description>
+			</opc:Argument>
+		</opc:OutputArguments>
+	</opc:Method>
+
+	<opc:Method SymbolicName="CancelPurgeReagents" ModellingRule="Mandatory">
+		<opc:OutputArguments>
+			<opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+				<opc:Description>The result of the method called</opc:Description>
+			</opc:Argument>
+		</opc:OutputArguments>
+	</opc:Method>
+
+	<opc:Method SymbolicName="Decontaminate" ModellingRule="Mandatory">
+		<opc:OutputArguments>
+			<opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+				<opc:Description>The result of the method called</opc:Description>
+			</opc:Argument>
+		</opc:OutputArguments>
+	</opc:Method>
+
+	<opc:Method SymbolicName="CancelDecontaminate" ModellingRule="Mandatory">
+		<opc:OutputArguments>
+			<opc:Argument Name="MethodResult" DataType="VcbResult" ValueRank="Scalar">
+				<opc:Description>The result of the method called</opc:Description>
+			</opc:Argument>
+		</opc:OutputArguments>
+	</opc:Method>
+
+</opc:ModelDesign>
