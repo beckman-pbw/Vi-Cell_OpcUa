@@ -1,29 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Threading;
 using System.Net;
 using System.IO;
 using System.Windows.Forms;
-using System.Text.Json;
-using System.Text.Json.Serialization;
-using System.Diagnostics;
 using System.Reflection;
-
-using Opc;
 using Opc.Ua;
-
 using ViCellBlu;
 using ViCellBLU_dotNET;
 using CellType = ViCellBlu.CellType;
 using SampleConfig = ViCellBLU_dotNET.SampleConfig;
 using SamplePosition = ViCellBLU_dotNET.SamplePosition;
-using Opc.Ua.Client;
 
 namespace ViCellBLU_dotNET_Test
 {
