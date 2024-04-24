@@ -386,7 +386,7 @@ namespace ViCellBLU_dotNET
 				myData = (byte[])val.Body;
 				outResult.Decode(new Opc.Ua.BinaryDecoder(myData, 0, myData.Count(), messageContext));
 	        }
-			catch (Exception ex)
+			catch (Exception)
 	        {
 		        // 
 	        }

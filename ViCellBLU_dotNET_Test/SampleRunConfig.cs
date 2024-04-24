@@ -1,5 +1,12 @@
 ﻿using System;
+using System.ComponentModel;
+using System.IO;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Runtime.Serialization;
+
+
+using ViCellBLU_dotNET;
 
 namespace ViCellBLU_dotNET_Test
 {

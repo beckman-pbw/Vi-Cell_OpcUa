@@ -1,15 +1,9 @@
 ﻿using System;
-using System.ComponentModel;
-using System.IO;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.Serialization;
 
-
 namespace ViCellBLU_dotNET
 {
-
-    // ******************************************************************
     [Serializable()]
     public partial class SampleConfig
     {

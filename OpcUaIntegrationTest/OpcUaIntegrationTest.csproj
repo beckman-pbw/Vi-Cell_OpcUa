@@ -2,6 +2,7 @@
 	<PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
 		<IsPackable>false</IsPackable>
+		<Platforms>AnyCPU;x64</Platforms>
 	</PropertyGroup>
 	<ItemGroup>
 	  <None Remove="ViCellBLU.Client.Config.xml" />
@@ -13,8 +14,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Grpc" Version="2.37.0" />
 		<PackageReference Include="Moq" Version="4.16.0" />
-		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
+		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.8.3" />
 		<PackageReference Include="NUnit" Version="3.13.1" />
 		<PackageReference Include="NUnit3TestAdapter" Version="3.17.0" />
 		<PackageReference Include="System.Reactive.Core" Version="5.0.0" />

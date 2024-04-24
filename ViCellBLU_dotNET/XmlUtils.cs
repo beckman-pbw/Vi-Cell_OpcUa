@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.IO;
 using System.Diagnostics;
-using System.Xml;
+using System.Linq;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-
 
 namespace ViCellBLU_dotNET
 {
@@ -23,18 +18,19 @@ namespace ViCellBLU_dotNET
         {
             try
             {
-                XmlSerializer serializer = new XmlSerializer(typeof(T));
                 Stream reader = new FileStream(filename, FileMode.Open);
-                var cfg = (T)serializer.Deserialize(reader);
+                XmlSerializer serializer = new XmlSerializer(typeof(T));
                 reader.Close();
                 reader.Dispose();
+                var cfg = (T)serializer.Deserialize(reader);
                 return cfg;
             }
             catch (Exception ex)
             {
                 Debug.WriteLine(ex.Message);
             }
-            return default(T);
+
+            return default;
         }
 
         /// <summary>
@@ -78,7 +74,7 @@ namespace ViCellBLU_dotNET
             XDocument doc = XDocument.Parse(textWriter.ToString());
             StreamWriter writer = new StreamWriter(file);
 
-            foreach (XElement data in doc.Descendants(myObj.GetType().Name))
+            foreach (XElement data in doc.Descendants(myObj?.GetType().Name))
             {
                 if (saveColumnHeaders)
                 {

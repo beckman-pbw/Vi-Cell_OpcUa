@@ -39,26 +39,25 @@ namespace ViCellBLU_dotNET
 	#region Properties
 
         public bool IsConnected { get { return _opcSession != null && _opcSession.Connected; } }
-        public string ViCellIdentifier { get; private set; } = "";
+        public string ViCellIdentifier { get; private set; } = string.Empty;
         public ViCellStatusEnum CurrentStatus { get; private set; } = ViCellStatusEnum.Faulted;
         public LockStateEnum CurrentLockState { get; private set; } = LockStateEnum.Locked;
-        public string CurrentSampleName { get; private set; } = "";
+        public string CurrentSampleName { get; private set; } = string.Empty;
         public ViCellBlu.SamplePosition CurrentSamplePosition { get; private set; } = new ViCellBlu.SamplePosition();
         public UInt32 ReagentUsesRemaining { get; private set; } = 0;
         public UInt32 WasteTubeRemainingCapacityRemaining { get; private set; } = 0;
         public UInt64 DiskSpaceAvailable { get; private set; } = 0;
-        public string CurrentSampleId { get; private set; }
-        public string CurrentSampleOwner { get; private set; }
+        public string CurrentSampleId { get; private set; } = string.Empty;
+        public string CurrentSampleOwner { get; private set; } = string.Empty;
         public SampleStatusEnum CurrentSampleStatus { get; private set; } = SampleStatusEnum.NotProcessed;
         public ExportStatusEnum CurrentExportStatus { get; private set; } = ExportStatusEnum.Unknown;
-        public DeleteStatusEnum CurrentDeleteStatus { get; private set; } = DeleteStatusEnum.Unknown; 
-        public uint CurrentExportPercent { get; private set; } 
+        public DeleteStatusEnum CurrentDeleteStatus { get; private set; } = DeleteStatusEnum.Unknown;
+        public uint CurrentExportPercent { get; private set; } = 0;
         public Uuid CurrentSampleDataUuid { get; private set; } = Uuid.Empty;
-        public Uuid[] WorklistUuids { get; private set; }
+        //private Uuid[] worklistUuids = new Uuid[1];
+        public Uuid[]? WorklistUuids { get; private set; }
         public SampleResult LastSampleResult { get; private set; } = new SampleResult();
-
         public ApplicationConfiguration OpcAppConfig { get; private set; } = new ApplicationConfiguration();
-
         private Dictionary<string, int> fields = new Dictionary<string, int>();
 
 	#endregion
@@ -104,35 +103,31 @@ namespace ViCellBLU_dotNET
 	#endregion
         
 	#region Callbacks
-		public DisconnectHandler OnDisconnect { get; set; } = null;
-        public ReconnectHandler OnReconnect { get; set; } = null;
-        public SampleCompleteHandler OnSampleComplete { get; set; } = null;
-        public SampleSetCompleteHandler OnSampleSetComplete { get; set; } = null;
-        public PauseCompleteHandler OnPauseComplete { get; set; } = null;
-        public StopCompleteHandler OnStopComplete { get; set; } = null;
-        public ResumeCompleteHandler OnResumeComplete { get; set; } = null;
-        public UpdateSystemStatusHandler OnUpdateSystemStatus { get; set; } = null;
-        public UpdateLockStateHandler OnUpdateLockState { get; set; } = null;
-
-        public DeleteSampleStatusHandler OnDeleteSampleStatusUpdate { get; set; } = null;
-        public ExportStatusHandler OnExportStatusUpdate { get; set; } = null;
-        public ExportCompleteHandler OnExportComplete { get; set; } = null;
-
-        public DeleteSampleResultsCompleteHandler OnDeleteResultsComplete { get; set; } = null;
-        public SampleStatusChangedHandler OnSampleStatusChanged { get; set; } = null;
-        public WorklistCompleteHandler OnWorklistComplete { get; set; } = null;
-
-        public UpdateReagentUsesHandler OnUpdateReagentRemaining { get; set; } = null;
-        public UpdateWasteTubesHandler OnUpdateWasteTubeCapacity { get; set; } = null;
-        public UpdateViCellIdentifier OnUpdateViCellIdentifier { get; set; } = null;
-
-		public UpdateCleanFluidicsStatusHandler OnCleanFluidicsStatusUpdate { get; set; } = null;
-        public UpdatePrimeReagentsStatusHandler OnPrimeReagentsStatusUpdate { get; set; } = null;
-        public UpdatePurgeReagentsStatusHandler OnPurgeReagentsStatusUpdate { get; set; } = null;
-        public UpdateDecontaminateStatusHandler OnDecontaminateStatusUpdate { get; set; } = null;
-        public UpdateSoftwareVersionHandler OnSoftwareVersionUpdate { get; set; } = null;
-        public UpdateFirmwareVersionHandler OnFirmwareVersionUpdate { get; set; } = null;
-        public UpdateErrorStatusHandler OnErrorStatusUpdate { get; set; } = null;
+		public DisconnectHandler? OnDisconnect { get; set; }
+        public ReconnectHandler? OnReconnect { get; set; }
+        public SampleCompleteHandler? OnSampleComplete { get; set; }
+        public SampleSetCompleteHandler? OnSampleSetComplete { get; set; }
+        public PauseCompleteHandler? OnPauseComplete { get; set; }
+        public StopCompleteHandler? OnStopComplete { get; set; }
+        public ResumeCompleteHandler? OnResumeComplete { get; set; }
+        public UpdateSystemStatusHandler? OnUpdateSystemStatus { get; set; }
+        public UpdateLockStateHandler? OnUpdateLockState { get; set; }
+        public DeleteSampleStatusHandler? OnDeleteSampleStatusUpdate { get; set; }
+        public ExportStatusHandler? OnExportStatusUpdate { get; set; }
+        public ExportCompleteHandler? OnExportComplete { get; set; } = null;
+        public DeleteSampleResultsCompleteHandler? OnDeleteResultsComplete { get; set; }
+        public SampleStatusChangedHandler? OnSampleStatusChanged { get; set; }
+        public WorklistCompleteHandler? OnWorklistComplete { get; set; }
+        public UpdateReagentUsesHandler? OnUpdateReagentRemaining { get; set; }
+        public UpdateWasteTubesHandler? OnUpdateWasteTubeCapacity { get; set; }
+        public UpdateViCellIdentifier? OnUpdateViCellIdentifier { get; set; }
+		public UpdateCleanFluidicsStatusHandler? OnCleanFluidicsStatusUpdate { get; set; }
+        public UpdatePrimeReagentsStatusHandler? OnPrimeReagentsStatusUpdate { get; set; }
+        public UpdatePurgeReagentsStatusHandler? OnPurgeReagentsStatusUpdate { get; set; }
+        public UpdateDecontaminateStatusHandler? OnDecontaminateStatusUpdate { get; set; }
+        public UpdateSoftwareVersionHandler? OnSoftwareVersionUpdate { get; set; }
+        public UpdateFirmwareVersionHandler? OnFirmwareVersionUpdate { get; set; }
+        public UpdateErrorStatusHandler? OnErrorStatusUpdate { get; set; }
 
 		#endregion
 
@@ -141,16 +136,16 @@ namespace ViCellBLU_dotNET
 	    private int _reconnectPeriod = 10;
 
         private Session _opcSession;
-        private SessionReconnectHandler _reconnectHandler;
-        private NamespaceTable _namespaceUris;
+        private SessionReconnectHandler? _reconnectHandler = null;
+        private NamespaceTable? _namespaceUris = null;
 
-        private ReferenceDescriptionCollection _methodCollection;
-        private ReferenceDescription _browsedMethods;
-        private NodeId _parentMethodNode;
+        private ReferenceDescriptionCollection? _methodCollection =null;
+        private ReferenceDescription? _browsedMethods = null;
+        private NodeId? _parentMethodNode = null;
 
         private ReferenceDescriptionCollection _playCtrlCollection;
-        private ReferenceDescription _browsedPlayCtrl;
-        private NodeId _parentPlayNode;
+        private ReferenceDescription? _browsedPlayCtrl = null;
+        private NodeId? _parentPlayNode = null;
 
 	#endregion
 
@@ -228,7 +223,7 @@ namespace ViCellBLU_dotNET
             }
         }
 
-        private BinaryWriter _exportWriter = null;
+        private BinaryWriter? _exportWriter = null;
         private string _currBulkDataId = "";
         // ******************************************************************
         private void UpdateExportStatusCB(ExportStatusData status)
@@ -286,8 +281,11 @@ namespace ViCellBLU_dotNET
 			            {
 				            _exportWriter.Close();
 				            _exportWriter = null;
-				            OnExportComplete(finalStatus, _exportFilename);
-			            }
+                            if (OnExportComplete != null)
+                            {
+                                OnExportComplete(finalStatus, _exportFilename);
+                            }
+                        }
 			            catch (Exception e)
 			            {
 				            Debug.WriteLine(e.Message);
@@ -517,15 +515,17 @@ namespace ViCellBLU_dotNET
                 NodeId methodNode = ExpandedNodeId.ToNodeId(method.NodeId, _opcSession.NamespaceUris);
 
                 var reqHeader = new RequestHeader();
-                CallMethodRequest cmRequest = new CallMethodRequest();
-                cmRequest.ObjectId = _parentMethodNode;
-                cmRequest.MethodId = methodNode;
+                CallMethodRequest cmRequest = new CallMethodRequest
+                {
+                    ObjectId = _parentMethodNode,
+                    MethodId = methodNode
+                };
 
-                CallMethodRequestCollection cmReqCollection = new CallMethodRequestCollection();
-                cmReqCollection.Add(cmRequest);
-                CallMethodResultCollection resultCollection;
-                DiagnosticInfoCollection diagResults;
-                ResponseHeader respHdr = _opcSession.Call(reqHeader, cmReqCollection, out resultCollection, out diagResults);
+                CallMethodRequestCollection cmReqCollection = new CallMethodRequestCollection
+                {
+                    cmRequest
+                };
+                ResponseHeader respHdr = _opcSession.Call(reqHeader, cmReqCollection, out CallMethodResultCollection resultCollection, out DiagnosticInfoCollection diagResults);
 
                 if ((resultCollection.Count > 0) && (resultCollection[0].OutputArguments.Count > 0))
                 {
@@ -1160,7 +1160,7 @@ namespace ViCellBLU_dotNET
                     callResult = DecodeHelper.DecodeRawExportConfig(resultCollection[0].OutputArguments[0].Value, _opcSession.MessageContext);
                 }
 
-                if (callResult.ErrorLevel == ErrorLevelEnum.NoError)
+                if (callResult.ErrorLevel == ErrorLevelEnum.NoError && callResult.FileData != null)
                 {
                     File.WriteAllBytes(fullFilePathToSaveConfigIncludingExtension, callResult.FileData);
                 }
@@ -2442,7 +2442,7 @@ namespace ViCellBLU_dotNET
                 return;
             }
 
-            _opcSession = _reconnectHandler?.Session;
+            _opcSession = _reconnectHandler.Session;
             SetupVariables(MyMonitoredItemVariableHandler);
             SetupEvents(MyMonitoredItemEventHandler);
             _reconnectHandler?.Dispose();
@@ -2461,7 +2461,7 @@ namespace ViCellBLU_dotNET
         }
 
         // ******************************************************************
-        public ReferenceDescriptionCollection Browse(out byte[] continuationPoint, NodeId nodeId = null)
+        public ReferenceDescriptionCollection Browse(out byte[] continuationPoint, NodeId? nodeId = null)
         {
             if (null == nodeId)
             {
@@ -2491,23 +2491,25 @@ namespace ViCellBLU_dotNET
                     {
                         case ViCellBlu.BrowseNames.ViCellIdentifier:
                         {
-                            var id = value?.Value?.ToString();
-                            if(!string.IsNullOrEmpty(id))
+                            var id = value.Value.ToString();
+                            if(!string.IsNullOrEmpty(id) && OnUpdateViCellIdentifier != null)
+                            {
                                 OnUpdateViCellIdentifier(id);
+                            }
                             break;
                         }
 
                         case ViCellBlu.BrowseNames.ViCellStatus:
                         {
                             var status = (ViCellStatusEnum)value.Value;
-                            OnUpdateSystemStatus.Invoke(status);
+                            OnUpdateSystemStatus?.Invoke(status);
                             break;
                         }
 
                         case ViCellBlu.BrowseNames.LockState:
                         {
                             var state = (LockStateEnum)value.Value;
-                            OnUpdateLockState.Invoke(state);
+                            OnUpdateLockState?.Invoke(state);
                             break;
                         }
 
@@ -2515,7 +2517,7 @@ namespace ViCellBLU_dotNET
                         {
                             uint remain = 0;
                             UInt32.TryParse(value.Value.ToString(), out remain);
-                            OnUpdateReagentRemaining.Invoke(remain);
+                            OnUpdateReagentRemaining?.Invoke(remain);
                             break;
                         }
 
@@ -2523,21 +2525,21 @@ namespace ViCellBLU_dotNET
                         {
                             uint remain = 0;
                             UInt32.TryParse(value.Value.ToString(), out remain);
-                            OnUpdateWasteTubeCapacity.Invoke(remain);
+                            OnUpdateWasteTubeCapacity?.Invoke(remain);
                             break;
                         }
 
                         case ViCellBlu.BrowseNames.SoftwareVersion:
                         {
 	                        var version = (string)value.Value;
-	                        OnSoftwareVersionUpdate.Invoke(version);
+	                        OnSoftwareVersionUpdate?.Invoke(version);
 	                        break;
                         }
 
                         case ViCellBlu.BrowseNames.FirmwareVersion:
                         {
 	                        var version = (string)value.Value;
-	                        OnFirmwareVersionUpdate.Invoke(version);
+	                        OnFirmwareVersionUpdate?.Invoke(version);
 	                        break;
                         }
                     }
@@ -2556,7 +2558,7 @@ namespace ViCellBLU_dotNET
             {
 				foreach (var value in monitoredItem.DequeueEvents())
 				{
-					if (value?.EventFields == null)
+					if (value.EventFields == null)
                     {
                         continue;
                     }
@@ -2564,14 +2566,14 @@ namespace ViCellBLU_dotNET
 					int index = 0;
 					try
 					{
-						index = fields[value?.EventFields[2].ToString()];
+						index = fields[value.EventFields[2].ToString()];
 					}
 					catch (Exception ex)
 					{
 						Console.WriteLine(ex);
 					}
 
-					var str = value?.EventFields[2].ToString();
+					var str = value.EventFields[2].ToString();
                     switch (str)
                     {
 	                    case "Session/CreateSession":
@@ -2581,19 +2583,19 @@ namespace ViCellBLU_dotNET
 
 	                    case ViCellBlu.BrowseNames.SampleStatusChangedEvent:
 	                    {
-		                    if (value.EventFields[index].Value != null)
+		                    if (value.EventFields[index].Value != null && _opcSession != null)
 							{
 								var data = DecodeHelper.DecodeRawSampleStatusData(value.EventFields[index].Value, _opcSession.MessageContext);
-								OnSampleStatusChanged.Invoke(data);
+								OnSampleStatusChanged?.Invoke(data);
 							}
 		                    break;
 	                    }
 	                    case ViCellBlu.BrowseNames.SampleCompleteEvent:
 	                    {
-		                    if (value.EventFields[index].Value != null)
+		                    if (value.EventFields[index].Value != null && _opcSession != null)
 		                    {
 								var result = DecodeHelper.DecodeRawSampleComplete(value.EventFields[index].Value, _opcSession.MessageContext);
-								OnSampleComplete.Invoke(result);
+								OnSampleComplete?.Invoke(result);
 		                    }
 		                    break;
 	                    }
@@ -2601,70 +2603,70 @@ namespace ViCellBLU_dotNET
 	                    {
 		                    if (value.EventFields[index].Value != null)
 		                    {
-			                    OnWorklistComplete.Invoke(((Uuid[])value.EventFields[index].Value));
+			                    OnWorklistComplete?.Invoke(((Uuid[])value.EventFields[index].Value));
 		                    }
 		                    break;
 	                    }
 	                    case ViCellBlu.BrowseNames.ExportStatusEvent:
 	                    {
-		                    if (value.EventFields[index].Value != null)
+		                    if (value.EventFields[index].Value != null && _opcSession != null)
 		                    {
 									var data = DecodeHelper.DecodeExportStatus(value.EventFields[index].Value, _opcSession.MessageContext);
-									OnExportStatusUpdate.Invoke(data);
+									OnExportStatusUpdate?.Invoke(data);
 		                    }
 		                    break;
 	                    }
 	                    case ViCellBlu.BrowseNames.DeleteSampleResultsProgressEvent:
 	                    {
-		                    if (value.EventFields[index].Value != null)
+		                    if (value.EventFields[index].Value != null && _opcSession != null)
 		                    {
 								var data = DecodeHelper.DecodeDeleteSampleStatus(value.EventFields[index].Value, _opcSession.MessageContext);
-								OnDeleteSampleStatusUpdate.Invoke(data);
+								OnDeleteSampleStatusUpdate?.Invoke(data);
 		                    }
 		                    break;
 	                    }
 						case ViCellBlu.BrowseNames.CleanFluidicsStatusEvent:
 	                    {
-		                    if (value.EventFields[index].Value != null)
+		                    if (value.EventFields[index].Value != null && _opcSession != null)
 		                    {
 			                    var result = DecodeHelper.DecodeCleanFluidicsStatus(value.EventFields[index].Value, _opcSession.MessageContext);
-			                    OnCleanFluidicsStatusUpdate.Invoke(result);
+			                    OnCleanFluidicsStatusUpdate?.Invoke(result);
 		                    }
 		                    break;
 	                    }
 	                    case ViCellBlu.BrowseNames.PrimeReagentsStatusEvent:
 	                    {
-		                    if (value.EventFields[index].Value != null)
+		                    if (value.EventFields[index].Value != null && _opcSession != null)
 		                    {
                                 var result = DecodeHelper.DecodePrimeReagentsStatus(value.EventFields[index].Value, _opcSession.MessageContext);
-			                    OnPrimeReagentsStatusUpdate.Invoke(result);
+			                    OnPrimeReagentsStatusUpdate?.Invoke(result);
 		                    }
                             break;
 	                    }
 						case ViCellBlu.BrowseNames.PurgeReagentsStatusEvent:
 	                    {
-		                    if (value.EventFields[index].Value != null)
+		                    if (value.EventFields[index].Value != null && _opcSession != null)
 		                    {
 			                    var result = DecodeHelper.DecodePurgeReagentsStatus(value.EventFields[index].Value, _opcSession.MessageContext);
-			                    OnPurgeReagentsStatusUpdate.Invoke(result);
+			                    OnPurgeReagentsStatusUpdate?.Invoke(result);
 		                    }
 		                    break;
 	                    }
 	                    case ViCellBlu.BrowseNames.DecontaminateStatusEvent:
 	                    {
-		                    if (value.EventFields[index].Value != null)
+		                    if (value.EventFields[index].Value != null && _opcSession != null)
 		                    {
 			                    var result = DecodeHelper.DecodeDecontaminateStatus(value.EventFields[index].Value, _opcSession.MessageContext);
-			                    OnDecontaminateStatusUpdate.Invoke(result);
+			                    OnDecontaminateStatusUpdate?.Invoke(result);
 		                    }
 		                    break;
 	                    }
 	                    case ViCellBlu.BrowseNames.ErrorStatusEvent:
 	                    {
-		                    if (value.EventFields[index].Value != null && _opcSession.MessageContext != null)
+		                    if (value.EventFields[index].Value != null && _opcSession != null)
 		                    { 
 			                    var result = DecodeHelper.DecodeErrorStatus(value.EventFields[index].Value, _opcSession.MessageContext);
-			                    OnErrorStatusUpdate.Invoke(result);
+			                    OnErrorStatusUpdate?.Invoke(result);
 		                    }
                             break;
 	                    }

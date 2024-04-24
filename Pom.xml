@@ -1,19 +1,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-	<name>Shepherd Viability Science Module OPC-UA</name>
+	<name>Vi-Cell OPC-UA</name>
 	<description>Build and deploy</description>
 
-	<groupId>com.beckman.particle.shepherd.viability</groupId>
-	<artifactId>hopcua</artifactId>
-
-	<version>0.50.0-SNAPSHOT</version>
+	<groupId>com.beckman.particle.vi-cell</groupId>
+	<artifactId>opcua</artifactId>
+	
+	<version>0.0.1-SNAPSHOT</version>
 
 	<packaging>pom</packaging>
 	<modelVersion>4.0.0</modelVersion>
 
 	<scm>
-		<connection>scm:git:git@github.com:BeclsParticle/sciencemodule_OpcUa.git</connection>
-		<developerConnection>scm:git:git@github.com:BeclsParticle/sciencemodule_OpcUa.git</developerConnection>
-		<url>https://github.com/BeclsParticle/sciencemodule_OpcUa.git</url>
+		<connection>scm:git:git@github.com/beckman-pbw/Vi-Cell_OpcUa.git</connection>
+		<developerConnection>scm:git:git@github.com/beckman-pbw/Vi-Cell_OpcUa.git</developerConnection>
+		<url>https://github.com/beckman-pbw/Vi-Cell_OpcUa.git</url>
 	</scm>
 
 	<distributionManagement>
@@ -73,8 +73,8 @@
 		<!-- *****            com.beckman              **********************-->
 		<!-- ****************************************************************-->
 		<dependency>
-			<groupId>com.beckman.particle.shepherd.viability</groupId>
-			<artifactId>grpc-opcua</artifactId>
+			<groupId>com.beckman.particle.vi-cell</groupId>
+			<artifactId>grpc</artifactId>
 			<version>${project.version}</version>
 			<type>zip</type>
 			<classifier>installer</classifier>
@@ -468,7 +468,7 @@
 							<workingDirectory>${project.basedir}</workingDirectory>
 							<executable>${visualstudio.devenv}</executable>
 							<arguments>
-								<argument>HawkeyeOpcUa.sln</argument>
+								<argument>OpcUa.sln</argument>
 								<argument>/p:OutDir=${project.build.directory}\Release\</argument>
 								<argument>/t:rebuild</argument>
 								<argument>/p:Configuration=Release</argument>
