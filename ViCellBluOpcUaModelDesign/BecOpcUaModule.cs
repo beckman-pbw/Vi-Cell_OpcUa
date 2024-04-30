@@ -61,8 +61,8 @@ namespace ViCellBluOpcUaModelDesign
             Bind<IReagentsManager>().To<ReagentsManager>().InSingletonScope();
             Bind<IShutdownOrReboot>().To<ShutdownOrReboot>().InSingletonScope();
 
-			// Events
-			Bind<IRegisteredEventFactory>().ToFactory();
+            // Events
+            Bind<IRegisteredEventFactory>().ToFactory();
             Bind<NodeEventFactory>().ToSelf().InSingletonScope();
 
             // Add variables/events here

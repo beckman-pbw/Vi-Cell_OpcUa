@@ -8,12 +8,12 @@ namespace ViCellBluOpcUaModelDesign.Events
 {
     internal delegate IRegisteredEvent MakeRegisteredEvent(IGrpcClient client, NodeState nodeState);
 
-	/// <summary>
-	/// Factory for gRPC registered events indexed by their OPC/UA NodeId. Leverages Ninject to inject the logger and node manager into each registered event instance.
-	/// For each supported NodeState that events can be requested, an entry for its <a href="@ref ViCellBluOpcUaModelDesign.OpcRegisteredEvent">OpcRegisteredEvent</a>
-	/// needs to be added to the <a href="@ref ViCellBluOpcUaModelDesign.BecOpcUaModule">Ninject module for OPC/UA</a>
-	/// </summary>
-	public class NodeEventFactory
+    /// <summary>
+    /// Factory for gRPC registered events indexed by their OPC/UA NodeId. Leverages Ninject to inject the logger and node manager into each registered event instance.
+    /// For each supported NodeState that events can be requested, an entry for its <a href="@ref ViCellBluModelDesign.OpcRegisteredEvent">OpcRegisteredEvent</a>
+    /// needs to be added to the <a href="@ref ViCellBluModelDesign.BecOpcUaModule">Ninject module for OPC/UA</a>
+    /// </summary>
+    public class NodeEventFactory
     {
         private BecNodeManager _nodeManager;
         private readonly Dictionary<NodeId, MakeRegisteredEvent> _registeredEvents;
@@ -32,7 +32,7 @@ namespace ViCellBluOpcUaModelDesign.Events
                 {new NodeId(ViCellBlu.Variables.ViCellBluState_WasteTubeRemainingCapacity, beckmanNamespaceIndex ), registeredEventFactory.CreateWasteTubeCapacityRegisteredVariable},
 				{new NodeId(ViCellBlu.Variables.ViCellBluState_SoftwareVersion, beckmanNamespaceIndex ), registeredEventFactory.CreateSoftwareVersionRegisteredVariable},
 				{new NodeId(ViCellBlu.Variables.ViCellBluState_FirmwareVersion, beckmanNamespaceIndex ), registeredEventFactory.CreateFirmwareVersionRegisteredVariable},
-			};
+            };
         }
 
         public IRegisteredEvent CreateRegisteredEvent(IGrpcClient client, NodeState nodeState)

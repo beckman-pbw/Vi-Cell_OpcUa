@@ -54,7 +54,6 @@ namespace ViCellBLU_dotNET
         public DeleteStatusEnum CurrentDeleteStatus { get; private set; } = DeleteStatusEnum.Unknown;
         public uint CurrentExportPercent { get; private set; } = 0;
         public Uuid CurrentSampleDataUuid { get; private set; } = Uuid.Empty;
-        //private Uuid[] worklistUuids = new Uuid[1];
         public Uuid[]? WorklistUuids { get; private set; }
         public SampleResult LastSampleResult { get; private set; } = new SampleResult();
         public ApplicationConfiguration OpcAppConfig { get; private set; } = new ApplicationConfiguration();
@@ -306,15 +305,15 @@ namespace ViCellBLU_dotNET
 
 #region Constructor
 
-		// ******************************************************************
-		public ViCellBLU()
+        // ******************************************************************
+        public ViCellBLU()
         {
             CurrentStatus = ViCellStatusEnum.Faulted;
             CurrentLockState = LockStateEnum.Unlocked;
             CurrentSampleName = "";
 
 			// Only add callbacks here if internal processing or local data caching is needed.
-			OnSampleComplete += this.SampleCompleteCB;
+            OnSampleComplete += this.SampleCompleteCB;
             OnUpdateViCellIdentifier += this.UpdateViCellIdentifierCB;
             OnUpdateLockState += this.UpdateLockStateCB;
             OnUpdateSystemStatus += this.UpdateSystemStatusCB;
@@ -325,7 +324,7 @@ namespace ViCellBLU_dotNET
             OnDeleteSampleStatusUpdate += UpdateDeleteStatusCB;
             OnExportStatusUpdate += UpdateExportStatusCB;
 
-			OpcAppConfig = new ApplicationConfiguration()
+            OpcAppConfig = new ApplicationConfiguration()
             {
                 ApplicationName = "ViCellBLU_dotNET",
                 ApplicationUri = Utils.Format(@"urn:{0}:ViCellBLU:Server", System.Net.Dns.GetHostName()),
@@ -358,7 +357,7 @@ namespace ViCellBLU_dotNET
 
 		#region Methods
 
-		public List<CellType> GetCellTypes()
+        public List<CellType> GetCellTypes()
         {
 	        // @todo - get celltypes for the current user from the instrument
 
@@ -1477,6 +1476,396 @@ namespace ViCellBLU_dotNET
 			return callResult;
 		}
 
+	#endregion
+	#region Connection
+
+        // ******************************************************************
+        public ViCellBlu.VcbResult Disconnect()
+        {
+            ViCellBlu.VcbResult callResult = new ViCellBlu.VcbResult()
+            {
+	            ErrorLevel = ErrorLevelEnum.Error, 
+	            MethodResult = MethodResultEnum.Failure
+            };
+
+            try
+            {
+                LastSampleResult = new SampleResult{AnalysisBy = ""};
+                if (!IsConnected)
+                {
+                    callResult.ResponseDescription = "Not Connected";
+                    return callResult;
+                }
+
+                if (_opcSession != null)
+                {
+                    if (CurrentLockState == LockStateEnum.Locked)
+                        ReleaseLock();
+                    _opcSession.Close();
+                    _reconnectHandler?.Dispose();
+                    _reconnectHandler = null;
+                    callResult.ErrorLevel = ErrorLevelEnum.NoError;
+                    callResult.MethodResult = MethodResultEnum.Success;
+                    callResult.ResponseDescription = "";
+
+	                return callResult;
+                }
+            }
+            catch (Exception e)
+            {
+                callResult.ResponseDescription = "Exception: " + e.Message;
+                Debug.WriteLine($"Error attempting {MethodBase.GetCurrentMethod()?.Name}", e);
+            }
+
+            return callResult;
+        }
+
+        private string _username = "";
+        // ******************************************************************
+        public ViCellBlu.VcbResult Connect(
+	        String username, 
+	        String password, 
+	        IPAddress ipAddr, 
+	        UInt32 port = 62641, 
+	        UInt32 discoverTimeout = 15000, 
+	        UInt32 cnxTimeout = 60000)
+        {
+            ViCellBlu.VcbResult callResult = new ViCellBlu.VcbResult()
+            {
+	            ErrorLevel = ErrorLevelEnum.Error, 
+	            MethodResult = MethodResultEnum.Failure
+            };
+
+            LastSampleResult = new SampleResult { AnalysisBy = "" };
+
+			_username = username;
+
+            string endpointUrl = "opc.tcp://" + ipAddr.ToString() + ":" + port.ToString() + "/ViCellBlu/Server";
+            try
+            {
+	            try
+                {
+                    OpcAppConfig.Validate(ApplicationType.Client).Wait();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                }
+
+                var application = new ApplicationInstance()
+                {
+                    ApplicationType = ApplicationType.Client,
+                    ApplicationName = "ViCellBLU dotNET",
+                    ApplicationConfiguration = OpcAppConfig
+                };
+
+                var haveAppCertificateTask = application.CheckApplicationInstanceCertificate(false, 0);
+                var haveAppCertificate = haveAppCertificateTask.Result;
+                if (haveAppCertificate)
+                    OpcAppConfig.ApplicationUri = X509Utils.GetApplicationUriFromCertificate(OpcAppConfig.SecurityConfiguration.ApplicationCertificate.Certificate);
+
+                var selectedEndpoint = CoreClientUtils.SelectEndpoint(OpcAppConfig, endpointUrl, haveAppCertificate, (int)discoverTimeout);
+                var endpointConfiguration = EndpointConfiguration.Create(OpcAppConfig);
+                var endpoint = new ConfiguredEndpoint(null, selectedEndpoint, endpointConfiguration);
+
+                var user = new UserIdentity(username, password);
+
+                var sessionTask = Session.Create(OpcAppConfig, endpoint, true, false, "ViCellBLU_dotNET", cnxTimeout, user, null);
+                _opcSession = sessionTask.Result;
+
+                _namespaceUris = _opcSession.NamespaceUris;
+                _opcSession.KeepAlive += Client_KeepAlive;
+
+                var scoutXrefs = Browse(out _);
+                var viCellBlu = scoutXrefs.First(n => n.BrowseName.Name.Equals(ViCellBlu.BrowseNames.ViCellBluState));
+                var viCellBluRefs = Browse(out _, viCellBlu.NodeId);
+
+                _browsedPlayCtrl = viCellBluRefs.First(n => n.BrowseName.Name.Equals(ViCellBlu.BrowseNames.PlayControl));
+                _playCtrlCollection = Browse(out _, _browsedPlayCtrl.NodeId);
+                _parentPlayNode = ExpandedNodeId.ToNodeId(_browsedPlayCtrl.NodeId, _opcSession.NamespaceUris);
+
+                _browsedMethods = viCellBluRefs.First(n => n.BrowseName.Name.Equals(ViCellBlu.BrowseNames.Methods));
+                _methodCollection = Browse(out _, _browsedMethods.NodeId);
+                _parentMethodNode = ExpandedNodeId.ToNodeId(_browsedMethods.NodeId, _opcSession.NamespaceUris);
+
+                SetupVariables(MyMonitoredItemVariableHandler);
+                SetupEvents(MyMonitoredItemEventHandler);
+
+                _exportWriter = null;
+
+                return new ViCellBlu.VcbResult
+                {
+                    ErrorLevel = ErrorLevelEnum.NoError,
+                    MethodResult = MethodResultEnum.Success,
+                    ResponseDescription = ""
+                };
+            }
+            catch (Exception e)
+            {
+                callResult.ResponseDescription = "Connect-Exception: " + e.ToString();
+                Debug.WriteLine("--- EXCEPTION: Connect ---", e.Message);
+            }
+
+            return callResult;
+        }
+
+        // ******************************************************************
+        private VcbResult SetupVariables(MonitoredItemNotificationEventHandler handler)
+        {
+            try
+            {
+                var subscription = new Subscription(_opcSession.DefaultSubscription) { };
+                subscription.PublishingInterval = 1000;
+                subscription.DisplayName = "Vi-Cell Test Client Subscription";
+                subscription.PublishingEnabled = true;
+                var nsIndex = (ushort)(_opcSession.NamespaceUris.GetIndex(ViCellBlu.Namespaces.ViCellBlu));
+                var list = new List<MonitoredItem> { };
+
+                var subDictionary = new Dictionary<uint, string>
+                {
+                    { ViCellBlu.Variables.ViCellBluState_ViCellIdentifier, ViCellBlu.BrowseNames.ViCellIdentifier  },
+                    { ViCellBlu.Variables.ViCellBluState_ViCellStatus, ViCellBlu.BrowseNames.ViCellStatus },
+                    { ViCellBlu.Variables.ViCellBluState_LockState, ViCellBlu.BrowseNames.LockState },
+                    { ViCellBlu.Variables.ViCellBluState_ReagentUsesRemaining, ViCellBlu.BrowseNames.ReagentUsesRemaining },
+                    { ViCellBlu.Variables.ViCellBluState_WasteTubeRemainingCapacity, ViCellBlu.BrowseNames.WasteTubeRemainingCapacity },
+                    { ViCellBlu.Variables.ViCellBluState_SoftwareVersion, ViCellBlu.BrowseNames.SoftwareVersion },
+                    { ViCellBlu.Variables.ViCellBluState_FirmwareVersion, ViCellBlu.BrowseNames.FirmwareVersion },
+                };
+
+                foreach (KeyValuePair<uint, string> entry in subDictionary)
+                {
+                    list.Add(new MonitoredItem(subscription.DefaultItem)
+                    {
+                        StartNodeId = new NodeId(entry.Key, nsIndex),
+                        DisplayName = entry.Value,
+                    });
+                }
+
+                list.ForEach(i => i.Notification += handler);
+                subscription.AddItems(list);
+                _opcSession.AddSubscription(subscription);
+                subscription.Create();
+
+                return VcbResult.Success;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("--- EXCEPTION: SetupSubscriptions ---", e.Message);
+            }
+            return VcbResult.Error;
+
+        }
+
+        // ******************************************************************
+        private VcbResult SetupEvents(MonitoredItemNotificationEventHandler handler)
+        {
+            try
+            {
+				var index = 0;
+				fields.Clear();
+
+				List<SimpleAttributeOperand> monitoredFields = new List<SimpleAttributeOperand>();
+
+				fields.Add("EventId", index);
+				monitoredFields.Insert(index++, new SimpleAttributeOperand
+				{
+					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
+					BrowsePath = new[] { new QualifiedName("EventId") },
+					AttributeId = Attributes.Value
+				});
+				fields.Add("EventType", index);
+				monitoredFields.Insert(index++, new SimpleAttributeOperand
+				{
+					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
+					BrowsePath = new[] { new QualifiedName("EventType") },
+					AttributeId = Attributes.Value
+				});
+				fields.Add("SourceName", index);
+				monitoredFields.Insert(index++, new SimpleAttributeOperand
+				{
+					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
+					BrowsePath = new[] { new QualifiedName("SourceName") },
+					AttributeId = Attributes.Value
+				});
+				fields.Add("Time", index);
+				monitoredFields.Insert(index++, new SimpleAttributeOperand
+				{
+					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
+					BrowsePath = new[] { new QualifiedName("Time") },
+					AttributeId = Attributes.Value
+				});
+				fields.Add("Message", index);
+				monitoredFields.Insert(index++, new SimpleAttributeOperand
+				{
+					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
+					BrowsePath = new[] { new QualifiedName("Message") },
+					AttributeId = Attributes.Value
+				});
+				fields.Add("Severity", index);
+				monitoredFields.Insert(index++, new SimpleAttributeOperand
+				{
+					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
+					BrowsePath = new[] { new QualifiedName("Severity") },
+					AttributeId = Attributes.Value
+				});
+				fields.Add("Session/CreateSession", index);
+				monitoredFields.Insert(index++, new SimpleAttributeOperand
+				{
+					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
+					BrowsePath = new[] { new QualifiedName("Session/CreateSession") },
+					AttributeId = Attributes.Value
+				});
+				fields.Add("Session/ActivateSession", index);
+				monitoredFields.Insert(index++, new SimpleAttributeOperand
+				{
+					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
+					BrowsePath = new[] { new QualifiedName("Session/ActivateSession") },
+					AttributeId = Attributes.Value
+				});
+				fields.Add(ViCellBlu.BrowseNames.SampleStatusChangedEvent, index);
+				monitoredFields.Insert(index++, new SimpleAttributeOperand
+				{
+					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
+					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.SampleStatusData) },
+					AttributeId = Attributes.Value
+				});
+				fields.Add(ViCellBlu.BrowseNames.SampleCompleteEvent, index);
+				monitoredFields.Insert(index++, new SimpleAttributeOperand
+				{
+					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
+					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.SampleResult) },
+					AttributeId = Attributes.Value
+				});
+				fields.Add(ViCellBlu.BrowseNames.WorkListCompleteEvent, index);
+				monitoredFields.Insert(index++, new SimpleAttributeOperand
+				{
+					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
+					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.SampleDataUuidList) },
+					AttributeId = Attributes.Value
+				});
+				fields.Add(ViCellBlu.BrowseNames.ExportStatusEvent, index);
+				monitoredFields.Insert(index++, new SimpleAttributeOperand
+				{
+					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
+					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.ExportStatusData) },
+					AttributeId = Attributes.Value
+				});
+				fields.Add(ViCellBlu.BrowseNames.DeleteSampleResultsProgressEvent, index);
+				monitoredFields.Insert(index++, new SimpleAttributeOperand
+				{
+					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
+					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.DeleteStatusInfo) },
+					AttributeId = Attributes.Value
+				});
+				fields.Add(ViCellBlu.BrowseNames.CleanFluidicsStatusEvent, index);
+				monitoredFields.Insert(index++, new SimpleAttributeOperand
+				{
+					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
+					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.CleanFluidicsStatus) },
+					AttributeId = Attributes.Value
+				});
+				fields.Add(ViCellBlu.BrowseNames.PrimeReagentsStatusEvent, index);
+				monitoredFields.Insert(index++, new SimpleAttributeOperand
+				{
+					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
+					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.PrimeReagentsStatus) },
+					AttributeId = Attributes.Value
+				});
+				fields.Add(ViCellBlu.BrowseNames.PurgeReagentsStatusEvent, index);
+				monitoredFields.Insert(index++, new SimpleAttributeOperand
+				{
+					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
+					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.PurgeReagentsStatus) },
+					AttributeId = Attributes.Value
+				});
+				fields.Add(ViCellBlu.BrowseNames.DecontaminateStatusEvent, index);
+				monitoredFields.Insert(index++, new SimpleAttributeOperand
+				{
+					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
+					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.DecontaminateStatus) },
+					AttributeId = Attributes.Value
+				});
+				fields.Add(ViCellBlu.BrowseNames.ErrorStatusEvent, index);
+				monitoredFields.Insert(index++, new SimpleAttributeOperand
+				{
+					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
+					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.Status) },
+					AttributeId = Attributes.Value
+				});
+
+                var subscription = new Subscription(_opcSession.DefaultSubscription);
+                subscription.PublishingInterval = 1000;
+                subscription.DisplayName = "Vi-Cell Client Event Subscription";
+                subscription.PublishingEnabled = true;
+
+                var monItem = new MonitoredItem(subscription.DefaultItem)
+                {
+                    NodeClass = NodeClass.Object,
+                    StartNodeId = Opc.Ua.ObjectIds.Server,
+                    AttributeId = Attributes.EventNotifier,
+                    SamplingInterval = -1,
+                    QueueSize = 0,
+                    CacheQueueSize = 0,
+                    Filter = new EventFilter() { SelectClauses = monitoredFields.ToArray() }
+                };
+
+                monItem.Notification += handler;
+                subscription.AddItem(monItem);
+                _opcSession.AddSubscription(subscription);
+                subscription.Create();
+
+                return VcbResult.Success;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine("--- EXCEPTION: SetupSubscriptions ---", e.Message);
+            }
+
+            return VcbResult.Error;
+        }
+
+        // ******************************************************************
+        public VcbResultGetDiskSpace GetDiskSpacePercentages()
+        {
+            VcbResultGetDiskSpace callResult = new VcbResultGetDiskSpace()
+            {
+	            ErrorLevel = ErrorLevelEnum.Error, 
+	            MethodResult = MethodResultEnum.Failure
+            };
+            try
+            {
+                if (!IsConnected)
+                {
+                    callResult.ResponseDescription = "Not Connected";
+                    return callResult;
+                }
+
+                ReferenceDescription method = _methodCollection.First(n => n.DisplayName.ToString().Equals(ViCellBlu.BrowseNames.GetAvailableDiskSpace));
+                NodeId methodNode = ExpandedNodeId.ToNodeId(method.NodeId, _opcSession.NamespaceUris);
+
+                var reqHeader = new RequestHeader();
+                CallMethodRequest cmRequest = new CallMethodRequest();
+                cmRequest.ObjectId = _parentMethodNode;
+                cmRequest.MethodId = methodNode;
+                CallMethodRequestCollection cmReqCollection = new CallMethodRequestCollection();
+                cmReqCollection.Add(cmRequest);
+                CallMethodResultCollection resultCollection;
+                DiagnosticInfoCollection diagResults;
+                ResponseHeader respHdr = _opcSession.Call(reqHeader, cmReqCollection, out resultCollection, out diagResults);
+                if ((resultCollection.Count > 0) && (resultCollection[0].OutputArguments.Count > 0))
+                {
+                    callResult = DecodeHelper.DecodeRawDiskSpaceData(resultCollection[0].OutputArguments[0].Value, _opcSession.MessageContext);
+                }
+            }
+            catch (Exception e)
+            {
+                callResult.ResponseDescription = "Exception: " + e.Message;
+                Debug.WriteLine($"Error attempting {MethodBase.GetCurrentMethod()?.Name}", e);
+            }
+
+            return callResult;
+        }
+        
 		// ******************************************************************
 		public ViCellBlu.VcbResultReagentVolume GetReagentVolume (CellHealthFluidTypeEnum type)
 		{
@@ -2012,397 +2401,6 @@ namespace ViCellBLU_dotNET
 
 	#endregion
 
-	#region Connection
-
-		// ******************************************************************
-		public ViCellBlu.VcbResult Disconnect()
-        {
-            ViCellBlu.VcbResult callResult = new ViCellBlu.VcbResult()
-            {
-	            ErrorLevel = ErrorLevelEnum.Error, 
-	            MethodResult = MethodResultEnum.Failure
-            };
-
-            try
-            {
-                LastSampleResult = new SampleResult{AnalysisBy = ""};
-                if (!IsConnected)
-                {
-                    callResult.ResponseDescription = "Not Connected";
-                    return callResult;
-                }
-
-                if (_opcSession != null)
-                {
-                    if (CurrentLockState == LockStateEnum.Locked)
-                        ReleaseLock();
-                    _opcSession.Close();
-                    _reconnectHandler?.Dispose();
-                    _reconnectHandler = null;
-                    callResult.ErrorLevel = ErrorLevelEnum.NoError;
-                    callResult.MethodResult = MethodResultEnum.Success;
-                    callResult.ResponseDescription = "";
-
-	                return callResult;
-                }
-            }
-            catch (Exception e)
-            {
-                callResult.ResponseDescription = "Exception: " + e.Message;
-                Debug.WriteLine($"Error attempting {MethodBase.GetCurrentMethod()?.Name}", e);
-            }
-
-            return callResult;
-        }
-
-        private string _username = "";
-        // ******************************************************************
-        public ViCellBlu.VcbResult Connect(
-	        String username, 
-	        String password, 
-	        IPAddress ipAddr, 
-	        UInt32 port = 62641, 
-	        UInt32 discoverTimeout = 15000, 
-	        UInt32 cnxTimeout = 60000)
-        {
-            ViCellBlu.VcbResult callResult = new ViCellBlu.VcbResult()
-            {
-	            ErrorLevel = ErrorLevelEnum.Error, 
-	            MethodResult = MethodResultEnum.Failure
-            };
-
-            LastSampleResult = new SampleResult { AnalysisBy = "" };
-
-			_username = username;
-
-            string endpointUrl = "opc.tcp://" + ipAddr.ToString() + ":" + port.ToString() + "/ViCellBlu/Server";
-            try
-            {
-	            try
-                {
-                    OpcAppConfig.Validate(ApplicationType.Client).Wait();
-                }
-                catch (Exception ex)
-                {
-                    Debug.WriteLine(ex.Message);
-                }
-
-                var application = new ApplicationInstance()
-                {
-                    ApplicationType = ApplicationType.Client,
-                    ApplicationName = "ViCellBLU dotNET",
-                    ApplicationConfiguration = OpcAppConfig
-                };
-
-                var haveAppCertificateTask = application.CheckApplicationInstanceCertificate(false, 0);
-                var haveAppCertificate = haveAppCertificateTask.Result;
-                if (haveAppCertificate)
-                    OpcAppConfig.ApplicationUri = X509Utils.GetApplicationUriFromCertificate(OpcAppConfig.SecurityConfiguration.ApplicationCertificate.Certificate);
-
-                var selectedEndpoint = CoreClientUtils.SelectEndpoint(OpcAppConfig, endpointUrl, haveAppCertificate, (int)discoverTimeout);
-                var endpointConfiguration = EndpointConfiguration.Create(OpcAppConfig);
-                var endpoint = new ConfiguredEndpoint(null, selectedEndpoint, endpointConfiguration);
-
-                var user = new UserIdentity(username, password);
-
-                var sessionTask = Session.Create(OpcAppConfig, endpoint, true, false, "ViCellBLU_dotNET", cnxTimeout, user, null);
-                _opcSession = sessionTask.Result;
-
-                _namespaceUris = _opcSession.NamespaceUris;
-                _opcSession.KeepAlive += Client_KeepAlive;
-
-                var scoutXrefs = Browse(out _);
-                var viCellBlu = scoutXrefs.First(n => n.BrowseName.Name.Equals(ViCellBlu.BrowseNames.ViCellBluState));
-                var viCellBluRefs = Browse(out _, viCellBlu.NodeId);
-
-                _browsedPlayCtrl = viCellBluRefs.First(n => n.BrowseName.Name.Equals(ViCellBlu.BrowseNames.PlayControl));
-                _playCtrlCollection = Browse(out _, _browsedPlayCtrl.NodeId);
-                _parentPlayNode = ExpandedNodeId.ToNodeId(_browsedPlayCtrl.NodeId, _opcSession.NamespaceUris);
-
-                _browsedMethods = viCellBluRefs.First(n => n.BrowseName.Name.Equals(ViCellBlu.BrowseNames.Methods));
-                _methodCollection = Browse(out _, _browsedMethods.NodeId);
-                _parentMethodNode = ExpandedNodeId.ToNodeId(_browsedMethods.NodeId, _opcSession.NamespaceUris);
-
-                SetupVariables(MyMonitoredItemVariableHandler);
-                SetupEvents(MyMonitoredItemEventHandler);
-
-                _exportWriter = null;
-
-				return new ViCellBlu.VcbResult
-                {
-                    ErrorLevel = ErrorLevelEnum.NoError,
-                    MethodResult = MethodResultEnum.Success,
-                    ResponseDescription = ""
-                };
-            }
-            catch (Exception e)
-            {
-                callResult.ResponseDescription = "Connect-Exception: " + e.ToString();
-                Debug.WriteLine("--- EXCEPTION: Connect ---", e.Message);
-            }
-
-            return callResult;
-        }
-
-        // ******************************************************************
-        private VcbResult SetupVariables(MonitoredItemNotificationEventHandler handler)
-        {
-            try
-            {
-                var subscription = new Subscription(_opcSession.DefaultSubscription) { };
-                subscription.PublishingInterval = 1000;
-                subscription.DisplayName = "Vi-Cell Test Client Subscription";
-                subscription.PublishingEnabled = true;
-                var nsIndex = (ushort)(_opcSession.NamespaceUris.GetIndex(ViCellBlu.Namespaces.ViCellBlu));
-                var list = new List<MonitoredItem> { };
-
-                var subDictionary = new Dictionary<uint, string>
-                {
-                    { ViCellBlu.Variables.ViCellBluState_ViCellIdentifier, ViCellBlu.BrowseNames.ViCellIdentifier  },
-                    { ViCellBlu.Variables.ViCellBluState_ViCellStatus, ViCellBlu.BrowseNames.ViCellStatus },
-                    { ViCellBlu.Variables.ViCellBluState_LockState, ViCellBlu.BrowseNames.LockState },
-                    { ViCellBlu.Variables.ViCellBluState_ReagentUsesRemaining, ViCellBlu.BrowseNames.ReagentUsesRemaining },
-                    { ViCellBlu.Variables.ViCellBluState_WasteTubeRemainingCapacity, ViCellBlu.BrowseNames.WasteTubeRemainingCapacity },
-                    { ViCellBlu.Variables.ViCellBluState_SoftwareVersion, ViCellBlu.BrowseNames.SoftwareVersion },
-                    { ViCellBlu.Variables.ViCellBluState_FirmwareVersion, ViCellBlu.BrowseNames.FirmwareVersion },
-                };
-
-                foreach (KeyValuePair<uint, string> entry in subDictionary)
-                {
-                    list.Add(new MonitoredItem(subscription.DefaultItem)
-                    {
-                        StartNodeId = new NodeId(entry.Key, nsIndex),
-                        DisplayName = entry.Value,
-                    });
-                }
-
-                list.ForEach(i => i.Notification += handler);
-                subscription.AddItems(list);
-                _opcSession.AddSubscription(subscription);
-                subscription.Create();
-
-                return VcbResult.Success;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("--- EXCEPTION: SetupSubscriptions ---", e.Message);
-            }
-            return VcbResult.Error;
-
-        }
-
-        // ******************************************************************
-        private VcbResult SetupEvents(MonitoredItemNotificationEventHandler handler)
-        {
-            try
-            {
-				var index = 0;
-				fields.Clear();
-
-				List<SimpleAttributeOperand> monitoredFields = new List<SimpleAttributeOperand>();
-
-				fields.Add("EventId", index);
-				monitoredFields.Insert(index++, new SimpleAttributeOperand
-				{
-					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
-					BrowsePath = new[] { new QualifiedName("EventId") },
-					AttributeId = Attributes.Value
-				});
-				fields.Add("EventType", index);
-				monitoredFields.Insert(index++, new SimpleAttributeOperand
-				{
-					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
-					BrowsePath = new[] { new QualifiedName("EventType") },
-					AttributeId = Attributes.Value
-				});
-				fields.Add("SourceName", index);
-				monitoredFields.Insert(index++, new SimpleAttributeOperand
-				{
-					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
-					BrowsePath = new[] { new QualifiedName("SourceName") },
-					AttributeId = Attributes.Value
-				});
-				fields.Add("Time", index);
-				monitoredFields.Insert(index++, new SimpleAttributeOperand
-				{
-					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
-					BrowsePath = new[] { new QualifiedName("Time") },
-					AttributeId = Attributes.Value
-				});
-				fields.Add("Message", index);
-				monitoredFields.Insert(index++, new SimpleAttributeOperand
-				{
-					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
-					BrowsePath = new[] { new QualifiedName("Message") },
-					AttributeId = Attributes.Value
-				});
-				fields.Add("Severity", index);
-				monitoredFields.Insert(index++, new SimpleAttributeOperand
-				{
-					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
-					BrowsePath = new[] { new QualifiedName("Severity") },
-					AttributeId = Attributes.Value
-				});
-				fields.Add("Session/CreateSession", index);
-				monitoredFields.Insert(index++, new SimpleAttributeOperand
-				{
-					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
-					BrowsePath = new[] { new QualifiedName("Session/CreateSession") },
-					AttributeId = Attributes.Value
-				});
-				fields.Add("Session/ActivateSession", index);
-				monitoredFields.Insert(index++, new SimpleAttributeOperand
-				{
-					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
-					BrowsePath = new[] { new QualifiedName("Session/ActivateSession") },
-					AttributeId = Attributes.Value
-				});
-				fields.Add(ViCellBlu.BrowseNames.SampleStatusChangedEvent, index);
-				monitoredFields.Insert(index++, new SimpleAttributeOperand
-				{
-					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
-					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.SampleStatusData) },
-					AttributeId = Attributes.Value
-				});
-				fields.Add(ViCellBlu.BrowseNames.SampleCompleteEvent, index);
-				monitoredFields.Insert(index++, new SimpleAttributeOperand
-				{
-					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
-					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.SampleResult) },
-					AttributeId = Attributes.Value
-				});
-				fields.Add(ViCellBlu.BrowseNames.WorkListCompleteEvent, index);
-				monitoredFields.Insert(index++, new SimpleAttributeOperand
-				{
-					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
-					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.SampleDataUuidList) },
-					AttributeId = Attributes.Value
-				});
-				fields.Add(ViCellBlu.BrowseNames.ExportStatusEvent, index);
-				monitoredFields.Insert(index++, new SimpleAttributeOperand
-				{
-					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
-					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.ExportStatusData) },
-					AttributeId = Attributes.Value
-				});
-				fields.Add(ViCellBlu.BrowseNames.DeleteSampleResultsProgressEvent, index);
-				monitoredFields.Insert(index++, new SimpleAttributeOperand
-				{
-					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
-					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.DeleteStatusInfo) },
-					AttributeId = Attributes.Value
-				});
-				fields.Add(ViCellBlu.BrowseNames.CleanFluidicsStatusEvent, index);
-				monitoredFields.Insert(index++, new SimpleAttributeOperand
-				{
-					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
-					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.CleanFluidicsStatus) },
-					AttributeId = Attributes.Value
-				});
-				fields.Add(ViCellBlu.BrowseNames.PrimeReagentsStatusEvent, index);
-				monitoredFields.Insert(index++, new SimpleAttributeOperand
-				{
-					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
-					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.PrimeReagentsStatus) },
-					AttributeId = Attributes.Value
-				});
-				fields.Add(ViCellBlu.BrowseNames.PurgeReagentsStatusEvent, index);
-				monitoredFields.Insert(index++, new SimpleAttributeOperand
-				{
-					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
-					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.PurgeReagentsStatus) },
-					AttributeId = Attributes.Value
-				});
-				fields.Add(ViCellBlu.BrowseNames.DecontaminateStatusEvent, index);
-				monitoredFields.Insert(index++, new SimpleAttributeOperand
-				{
-					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
-					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.DecontaminateStatus) },
-					AttributeId = Attributes.Value
-				});
-				fields.Add(ViCellBlu.BrowseNames.ErrorStatusEvent, index);
-				monitoredFields.Insert(index++, new SimpleAttributeOperand
-				{
-					TypeDefinitionId = Opc.Ua.ObjectTypeIds.BaseEventType,
-					BrowsePath = new[] { new QualifiedName(ViCellBlu.BrowseNames.Status) },
-					AttributeId = Attributes.Value
-				});
-
-                var subscription = new Subscription(_opcSession.DefaultSubscription);
-                subscription.PublishingInterval = 1000;
-                subscription.DisplayName = "Vi-Cell Client Event Subscription";
-                subscription.PublishingEnabled = true;
-
-                var monItem = new MonitoredItem(subscription.DefaultItem)
-                {
-                    NodeClass = NodeClass.Object,
-                    StartNodeId = Opc.Ua.ObjectIds.Server,
-                    AttributeId = Attributes.EventNotifier,
-                    SamplingInterval = -1,
-                    QueueSize = 0,
-                    CacheQueueSize = 0,
-                    Filter = new EventFilter() { SelectClauses = monitoredFields.ToArray() }
-                };
-
-                monItem.Notification += handler;
-                subscription.AddItem(monItem);
-                _opcSession.AddSubscription(subscription);
-                subscription.Create();
-
-                return VcbResult.Success;
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine("--- EXCEPTION: SetupSubscriptions ---", e.Message);
-            }
-
-            return VcbResult.Error;
-        }
-
-        // ******************************************************************
-        public VcbResultGetDiskSpace GetDiskSpacePercentages()
-        {
-            VcbResultGetDiskSpace callResult = new VcbResultGetDiskSpace()
-            {
-	            ErrorLevel = ErrorLevelEnum.Error, 
-	            MethodResult = MethodResultEnum.Failure
-            };
-            try
-            {
-                if (!IsConnected)
-                {
-                    callResult.ResponseDescription = "Not Connected";
-                    return callResult;
-                }
-
-                ReferenceDescription method = _methodCollection.First(n => n.DisplayName.ToString().Equals(ViCellBlu.BrowseNames.GetAvailableDiskSpace));
-                NodeId methodNode = ExpandedNodeId.ToNodeId(method.NodeId, _opcSession.NamespaceUris);
-
-                var reqHeader = new RequestHeader();
-                CallMethodRequest cmRequest = new CallMethodRequest();
-                cmRequest.ObjectId = _parentMethodNode;
-                cmRequest.MethodId = methodNode;
-                CallMethodRequestCollection cmReqCollection = new CallMethodRequestCollection();
-                cmReqCollection.Add(cmRequest);
-                CallMethodResultCollection resultCollection;
-                DiagnosticInfoCollection diagResults;
-                ResponseHeader respHdr = _opcSession.Call(reqHeader, cmReqCollection, out resultCollection, out diagResults);
-                if ((resultCollection.Count > 0) && (resultCollection[0].OutputArguments.Count > 0))
-                {
-                    callResult = DecodeHelper.DecodeRawDiskSpaceData(resultCollection[0].OutputArguments[0].Value, _opcSession.MessageContext);
-                }
-            }
-            catch (Exception e)
-            {
-                callResult.ResponseDescription = "Exception: " + e.Message;
-                Debug.WriteLine($"Error attempting {MethodBase.GetCurrentMethod()?.Name}", e);
-            }
-
-            return callResult;
-        }
-        
-    #endregion
-
 	#region Private_Functions
         // ******************************************************************
         private void Client_KeepAlive(Session sender, KeepAliveEventArgs e)
@@ -2556,8 +2554,8 @@ namespace ViCellBLU_dotNET
         {
             try
             {
-				foreach (var value in monitoredItem.DequeueEvents())
-				{
+                foreach (var value in monitoredItem.DequeueEvents())
+                {
 					if (value.EventFields == null)
                     {
                         continue;
@@ -2671,7 +2669,7 @@ namespace ViCellBLU_dotNET
                             break;
 	                    }
                     }
-				}
+                }
             }
             catch(Exception ex) {
                 Console.WriteLine(ex.Message);

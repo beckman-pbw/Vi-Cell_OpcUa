@@ -54,7 +54,7 @@ namespace ViCellBLU_dotNET
             {
                 byte[] myData;
                 var val = (Opc.Ua.ExtensionObject)rawResult;
-                myData = (byte[])val.Body; 
+                myData = (byte[])val.Body;
                 callResult.Decode(new Opc.Ua.BinaryDecoder(myData, 0, myData.Count(), messageContext));
             }
             catch (Exception ex)
@@ -76,7 +76,7 @@ namespace ViCellBLU_dotNET
                 myData = (byte[])val.Body;
                 outResult.Decode(new Opc.Ua.BinaryDecoder(myData, 0, myData.Count(), messageContext));
             }
-            catch 
+            catch (Exception)
             {
                 outResult.BulkDataId = "";
             }
@@ -93,7 +93,7 @@ namespace ViCellBLU_dotNET
                 myData = (byte[])val.Body;
                 outResult.Decode(new Opc.Ua.BinaryDecoder(myData, 0, myData.Count(), messageContext));
             }
-            catch 
+            catch (Exception)
             {
                 outResult.DeletePercent = 0;
             }
@@ -188,7 +188,7 @@ namespace ViCellBLU_dotNET
                 myData = (byte[])val.Body;
                 outResult.Decode(new Opc.Ua.BinaryDecoder(myData, 0, myData.Count(), messageContext));
             }
-            catch 
+            catch (Exception)
             {
                 outResult.Status = SampleStatusEnum.NotProcessed;
             }

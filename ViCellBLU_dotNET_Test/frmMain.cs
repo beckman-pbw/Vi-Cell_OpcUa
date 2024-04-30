@@ -387,50 +387,50 @@ namespace ViCellBLU_dotNET_Test
 			}));
 		}
 
-		DataTable _dtSet;
+        DataTable _dtSet;
         // ******************************************************************
         private void frmMain_Load(object sender, EventArgs e)
         {
-	        _myBlu = new ViCellBLU();
-	        _progressBarWidth = progressBarDiskSpace.Width;
-	        SetOpcCertificate(_myBlu);
+            _myBlu = new ViCellBLU();
+            _progressBarWidth = progressBarDiskSpace.Width;
+            SetOpcCertificate(_myBlu);
 
             Version ver = Assembly.GetExecutingAssembly().GetName().Version;
             lblAppVersion.Text = "Version " + ver.ToString();
 
-	        grpConnected.Enabled = true;
-	        cbxCT_Decluster.SelectedIndex = 0;
-	        cbxQC_AssayParam.SelectedIndex = 0;
+            grpConnected.Enabled = true;
+            cbxCT_Decluster.SelectedIndex = 0;
+            cbxQC_AssayParam.SelectedIndex = 0;
 	        cbxSelectReagent.SelectedIndex = 0;
-	        txtIPAddr.Text = Properties.Settings.Default.IPAddr;
-	        txtPort.Text = Properties.Settings.Default.CnxPort.ToString();
-	        txtUserName.Text = Properties.Settings.Default.Username;
-	        txtPassword.Text = Properties.Settings.Default.Password;
-	        bttnConnect.Select();
-	        SampleFilterComboBox.SelectedIndex = 0;
+            txtIPAddr.Text = Properties.Settings.Default.IPAddr;
+            txtPort.Text = Properties.Settings.Default.CnxPort.ToString();
+            txtUserName.Text = Properties.Settings.Default.Username;
+            txtPassword.Text = Properties.Settings.Default.Password;
+            bttnConnect.Select();
+            SampleFilterComboBox.SelectedIndex = 0;
 
-	        _dtSet = CreateSampleTable();
-	        dgvSet.DataSource = _dtSet;
-	        UpdateSetGridWidths();
+            _dtSet = CreateSampleTable();
+            dgvSet.DataSource = _dtSet;
+            UpdateSetGridWidths();
 
-	        grpConnected.Enabled = false;
-	        bttnConnect.Text = "Connect";
+            grpConnected.Enabled = false;
+            bttnConnect.Text = "Connect";
 
-	        ClearInstrumentInfo();
+            ClearInstrumentInfo();
 
-	        _myBlu.OnUpdateLockState += OnUpdateLockStateCB;
-	        _myBlu.OnUpdateSystemStatus += OnUpdateSystemStatusCB;
-	        _myBlu.OnUpdateReagentRemaining += OnUpdateReagentCB;
-	        _myBlu.OnUpdateWasteTubeCapacity += OnUpdateWasteTubeCB;
-	        _myBlu.OnUpdateViCellIdentifier += OnUpdateViCellIdentifierCB;
-	        _myBlu.OnDisconnect += DisconnectHandlerCB;
-	        _myBlu.OnReconnect += ReconnectHandlerCB;
-	        _myBlu.OnSampleStatusChanged += OnSampleStatusChangedCB;
-	        _myBlu.OnSampleComplete += OnSampleCompleteCB;
-	        _myBlu.OnWorklistComplete += OnWorklistCompleteCB;
+            _myBlu.OnUpdateLockState += OnUpdateLockStateCB;
+            _myBlu.OnUpdateSystemStatus += OnUpdateSystemStatusCB;
+            _myBlu.OnUpdateReagentRemaining += OnUpdateReagentCB;
+            _myBlu.OnUpdateWasteTubeCapacity += OnUpdateWasteTubeCB;
+            _myBlu.OnUpdateViCellIdentifier += OnUpdateViCellIdentifierCB;
+            _myBlu.OnDisconnect += DisconnectHandlerCB; 
+            _myBlu.OnReconnect += ReconnectHandlerCB;
+            _myBlu.OnSampleStatusChanged += OnSampleStatusChangedCB;
+            _myBlu.OnSampleComplete += OnSampleCompleteCB;
+            _myBlu.OnWorklistComplete += OnWorklistCompleteCB;
 	        _myBlu.OnExportStatusUpdate += OnExportStatusCB;
-	        _myBlu.OnExportComplete += OnExportCompleteCB;
-	        _myBlu.OnDeleteSampleStatusUpdate += OnDeleteStatusUpdateCB;
+            _myBlu.OnExportComplete += OnExportCompleteCB;
+            _myBlu.OnDeleteSampleStatusUpdate += OnDeleteStatusUpdateCB;
 	        _myBlu.OnCleanFluidicsStatusUpdate += OnCleanFluidicsStatusUpdateCB;
 	        _myBlu.OnPrimeReagentsStatusUpdate += OnPrimeReagentsStatusUpdateCB;
 	        _myBlu.OnPurgeReagentsStatusUpdate += OnPurgeReagentsStatusUpdateCB;
@@ -447,7 +447,7 @@ namespace ViCellBLU_dotNET_Test
         }
 
         // ******************************************************************
-		private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
+        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             try
             {
@@ -929,6 +929,7 @@ namespace ViCellBLU_dotNET_Test
             bttnSampleStop.Enabled = show;
 
             bttnEjectStage.Visible = show;
+//TODO: conditional compilation...
 //NOTE: disabled this button.  CellHealth module does not have a stage.
 //            bttnEject.Enabled = show;
 
@@ -1229,7 +1230,7 @@ namespace ViCellBLU_dotNET_Test
 							lstCellTypes.Items.Add(cell.CellTypeName);
 						}
                     }));
-				}
+                }
                 UpdateCallResultDisplay(res.MethodResult, res.ErrorLevel, res.ResponseDescription);
             }
             catch { }
@@ -1908,7 +1909,7 @@ namespace ViCellBLU_dotNET_Test
         }
 
 	    // *****************************************************************
-	    private void bttnDeleteResult_Click(object sender, EventArgs e)
+        private void bttnDeleteResult_Click(object sender, EventArgs e)
         {
             ShowButtons(false);
             ClearCallResultDisplay(Color.Yellow);
@@ -2034,7 +2035,7 @@ namespace ViCellBLU_dotNET_Test
                 numUDCT_MixCycles.Value = cell.NumMixingCycles;
                 numUDCT_ConcAdjFactor.Value = (decimal)cell.ConcentrationAdjustmentFactor;
             }
-            catch
+            catch (Exception)
             {
                 //do nothing
             }
@@ -2056,7 +2057,7 @@ namespace ViCellBLU_dotNET_Test
                 numUDQC_AcceptLimits.Value = (decimal)qc.AcceptanceLimits;
                 dtpQCExpires.Value = qc.ExpirationDate;
             }
-            catch 
+            catch (Exception)
             {
                 //do nothing
             }
@@ -2147,10 +2148,10 @@ namespace ViCellBLU_dotNET_Test
 		        UpdateCallResultDisplay(res.MethodResult, res.ErrorLevel, res.ResponseDescription);
 	        }
 	        catch { }
-	        ShowButtons(true);
+            ShowButtons(true);
         }
 
-		private void lstSampleCompleteData_MouseUp(object sender, MouseEventArgs e)
+        private void lstSampleCompleteData_MouseUp(object sender, MouseEventArgs e)
         {
             lstSampleCompleteData.Items.Clear();
             lstSampleCompleteData.Refresh();

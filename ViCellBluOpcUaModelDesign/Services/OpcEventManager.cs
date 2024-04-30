@@ -33,7 +33,7 @@ namespace ViCellBluOpcUaModelDesign.Services
         private DecontaminateStatusRegisteredEvent _myDecontaminateStatusRegisteredEvent = null;
         private ErrorStatusRegisteredEvent _myErrorStatusRegisteredEvent = null;
 
-		public OpcEventManager(ILogger logger, IOpcUaFactory opcUaFactory, IRegisteredEventFactory registeredEventFactory, BecNodeManager nodeManager)
+        public OpcEventManager(ILogger logger, IOpcUaFactory opcUaFactory, IRegisteredEventFactory registeredEventFactory, BecNodeManager nodeManager)
         {
             _logger = logger;
             _nodeManager = nodeManager;

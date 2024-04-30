@@ -245,9 +245,9 @@ namespace ViCellBluOpcUaModelDesign.Services
 		        MethodResult = ViCellBlu.MethodResultEnum.Failure,
 		        ErrorLevel = ViCellBlu.ErrorLevelEnum.Error,
 		        Volume = 0
-	        };
+            };
 
-	        return ServiceResult.Good; // Always "good" for the attempt (ACK)
+            return ServiceResult.Good; // Always "good" for the attempt (ACK)
         }
 
         private string LogException(string methodName, Exception exception)

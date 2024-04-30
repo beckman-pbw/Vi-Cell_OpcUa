@@ -73,5 +73,5 @@ namespace ViCellBluOpcUaModelDesign.Services
                     nameof(HandleRequestGetAvailableDiskSpace), e, ref methodResult);
             }
         }
-	}
+    }
 }

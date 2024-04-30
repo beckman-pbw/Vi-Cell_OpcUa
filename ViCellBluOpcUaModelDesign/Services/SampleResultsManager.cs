@@ -156,9 +156,9 @@ namespace ViCellBluOpcUaModelDesign.Services
 	        }
         }
 
-		#region Helper Methods
+        #region Helper Methods
 
-		private RequestDeleteSampleResults GetDeleteSampleResultsRequest(Uuid[] uuids, bool retainResultsAndFirstImage)
+        private RequestDeleteSampleResults GetDeleteSampleResultsRequest(Uuid[] uuids, bool retainResultsAndFirstImage)
         {
             var sampleRetrieveRequest = new RequestDeleteSampleResults
             {

@@ -17,10 +17,10 @@ namespace ViCellBlu
         private readonly IReagentsManager _reagentsManager;
         private readonly IShutdownOrReboot _shutdownOrReboot;
 
-		public MethodFolderState(ILockManager lockManager, ISampleResultsManager sampleResultsManager, 
+        public MethodFolderState(ILockManager lockManager, ISampleResultsManager sampleResultsManager, 
             ICellTypeManager cellTypeManager, IConfigurationManager configurationManager, IReagentsManager reagentsManager,
 			IShutdownOrReboot shutdownOrReboot,
-			NodeState parent) : base(parent)
+            NodeState parent) : base(parent)
         {
             _lockManager = lockManager;
             _sampleResultsManager = sampleResultsManager;
@@ -67,9 +67,9 @@ namespace ViCellBlu
             CancelPurgeReagents.OnCall = OnCancelPurgeReagentsCall;
             Decontaminate.OnCall = OnDecontaminateCall;
 			CancelDecontaminate.OnCall = OnCancelDecontaminateCall;
-		}
+        }
 
-		private ServiceResult OnRequestGetSampleResultsCall(
+        private ServiceResult OnRequestGetSampleResultsCall(
             ISystemContext context,
             MethodState method,
             NodeId objectid,
