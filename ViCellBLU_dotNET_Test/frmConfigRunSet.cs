@@ -100,7 +100,7 @@ namespace ViCellBLU_dotNET_Test
                         row[frmMain.CN_SaveEveryNthImage] = cfg.SaveEveryNthImage;
                         row[frmMain.CN_Row] = (Char)cfg.Position.Row;
                         row[frmMain.CN_Col] = (Char)cfg.Position.Column;
-                        row[frmMain.CN_WashType] = cfg.WashType;
+                        row[frmMain.CN_WorkflowType] = cfg.WorkflowType;
                         _dtSet.Rows.Add(row);
                     }
                     dgvSet.DataSource = _dtSet;
@@ -121,7 +121,7 @@ namespace ViCellBLU_dotNET_Test
             dgvSet.Columns[frmMain.CN_CellTypeName].Width = 110;
             dgvSet.Columns[frmMain.CN_QCName].Width = 90;
             dgvSet.Columns[frmMain.CN_SaveEveryNthImage].Width = 90;
-            dgvSet.Columns[frmMain.CN_WashType].Width = 65;
+            dgvSet.Columns[frmMain.CN_WorkflowType].Width = 65;
             dgvSet.Columns[frmMain.CN_Tag].Width = 80;
 
         }
@@ -144,8 +144,8 @@ namespace ViCellBLU_dotNET_Test
                 sample.QCName = Convert.ToString(row[frmMain.CN_QCName]);
                 var r = char.ToUpper(Convert.ToChar(row[frmMain.CN_Row]));
                 sample.Position.Set((ViCellBLU_dotNET.SamplePosition.RowDef)r, (ViCellBLU_dotNET.SamplePosition.ColumnDef)Convert.ToByte(row[frmMain.CN_Col]));
-                var wt = Convert.ToUInt32(row[frmMain.CN_WashType]);
-                sample.WashType = (ViCellBLU.WashType)wt;
+                var wt = Convert.ToUInt32(row[frmMain.CN_WorkflowType]);
+                sample.WorkflowType = (ViCellBLU.WorkflowType)wt;
                 setCfg.Samples.Add(sample);
             }
             return setCfg;

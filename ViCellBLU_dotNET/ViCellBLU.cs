@@ -18,7 +18,7 @@ namespace ViCellBLU_dotNET
 
 	#region Enums
 
-        public enum WashType
+        public enum WorkflowType
         {
             Normal = 0,
             Fast
@@ -2723,7 +2723,7 @@ namespace ViCellBLU_dotNET
             sdt.CellType.CellTypeName = scfg.CellTypeName;
             sdt.QualityControl.QualityControlName = scfg.QCName;
             sdt.SaveEveryNthImage = scfg.SaveEveryNthImage;
-            sdt.WashType = (ViCellBlu.WashTypeEnum)scfg.WashType;
+            sdt.WorkflowType = (ViCellBlu.WorkflowTypeEnum)scfg.WorkflowType;
             return sdt;
         }
 

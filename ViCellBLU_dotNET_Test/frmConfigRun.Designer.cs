@@ -38,9 +38,7 @@ namespace ViCellBLU_dotNET_Test
             this.label7 = new System.Windows.Forms.Label();
             this.txtSampleCellType = new System.Windows.Forms.TextBox();
             this.txtSampleTag = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
-            this.txtSampleQCName = new System.Windows.Forms.TextBox();
             this.txtSampleName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.bttnDone = new System.Windows.Forms.Button();
@@ -51,7 +49,7 @@ namespace ViCellBLU_dotNET_Test
             // numUD_NthImageSave
             // 
             this.numUD_NthImageSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.numUD_NthImageSave.Location = new System.Drawing.Point(254, 223);
+			this.numUD_NthImageSave.Location = new System.Drawing.Point(224, 156);
             this.numUD_NthImageSave.Name = "numUD_NthImageSave";
             this.numUD_NthImageSave.Size = new System.Drawing.Size(68, 26);
             this.numUD_NthImageSave.TabIndex = 44;
@@ -68,7 +66,7 @@ namespace ViCellBLU_dotNET_Test
             // 
             this.label14.AutoSize = true;
             this.label14.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label14.Location = new System.Drawing.Point(52, 226);
+			this.label14.Location = new System.Drawing.Point(32, 156);
             this.label14.Name = "label14";
             this.label14.Size = new System.Drawing.Size(186, 20);
             this.label14.TabIndex = 43;
@@ -79,7 +77,7 @@ namespace ViCellBLU_dotNET_Test
             // 
             this.bttnSC_Load.BackColor = System.Drawing.SystemColors.Control;
             this.bttnSC_Load.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.bttnSC_Load.Location = new System.Drawing.Point(24, 299);
+			this.bttnSC_Load.Location = new System.Drawing.Point(24, 198);
             this.bttnSC_Load.Margin = new System.Windows.Forms.Padding(9, 6, 9, 6);
             this.bttnSC_Load.Name = "bttnSC_Load";
             this.bttnSC_Load.Size = new System.Drawing.Size(140, 35);
@@ -92,7 +90,7 @@ namespace ViCellBLU_dotNET_Test
             // 
             this.bttnSC_Save.BackColor = System.Drawing.SystemColors.Control;
             this.bttnSC_Save.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.bttnSC_Save.Location = new System.Drawing.Point(199, 299);
+			this.bttnSC_Save.Location = new System.Drawing.Point(199, 198);
             this.bttnSC_Save.Margin = new System.Windows.Forms.Padding(9, 6, 9, 6);
             this.bttnSC_Save.Name = "bttnSC_Save";
             this.bttnSC_Save.Size = new System.Drawing.Size(140, 35);
@@ -105,7 +103,7 @@ namespace ViCellBLU_dotNET_Test
             // 
             this.numUD_Dilution.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.numUD_Dilution.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.numUD_Dilution.Location = new System.Drawing.Point(113, 183);
+			this.numUD_Dilution.Location = new System.Drawing.Point(113, 127);
             this.numUD_Dilution.Maximum = new decimal(new int[] {
             9999,
             0,
@@ -143,7 +141,7 @@ namespace ViCellBLU_dotNET_Test
             // 
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(32, 185);
+			this.label7.Location = new System.Drawing.Point(32, 129);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(75, 20);
             this.label7.TabIndex = 35;
@@ -164,42 +162,22 @@ namespace ViCellBLU_dotNET_Test
             // 
             this.txtSampleTag.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.txtSampleTag.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtSampleTag.Location = new System.Drawing.Point(113, 143);
+			this.txtSampleTag.Location = new System.Drawing.Point(113, 95);
             this.txtSampleTag.Name = "txtSampleTag";
             this.txtSampleTag.Size = new System.Drawing.Size(209, 26);
             this.txtSampleTag.TabIndex = 34;
             this.txtSampleTag.Text = "My Tag";
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(17, 105);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(90, 20);
-            this.label4.TabIndex = 29;
-            this.label4.Text = "QC Name:";
-            this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
             // label6
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(63, 145);
+			this.label6.Location = new System.Drawing.Point(63, 97);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(44, 20);
             this.label6.TabIndex = 33;
             this.label6.Text = "Tag:";
             this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            // 
-            // txtSampleQCName
-            // 
-            this.txtSampleQCName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtSampleQCName.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtSampleQCName.Location = new System.Drawing.Point(113, 103);
-            this.txtSampleQCName.Name = "txtSampleQCName";
-            this.txtSampleQCName.Size = new System.Drawing.Size(150, 26);
-            this.txtSampleQCName.TabIndex = 30;
             // 
             // txtSampleName
             // 
@@ -226,7 +204,7 @@ namespace ViCellBLU_dotNET_Test
             // 
             this.bttnDone.BackColor = System.Drawing.SystemColors.Control;
             this.bttnDone.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.bttnDone.Location = new System.Drawing.Point(113, 346);
+			this.bttnDone.Location = new System.Drawing.Point(113, 245);
             this.bttnDone.Margin = new System.Windows.Forms.Padding(9, 6, 9, 6);
             this.bttnDone.Name = "bttnDone";
             this.bttnDone.Size = new System.Drawing.Size(140, 35);
@@ -239,7 +217,7 @@ namespace ViCellBLU_dotNET_Test
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(356, 399);
+			this.ClientSize = new System.Drawing.Size(356, 297);
             this.Controls.Add(this.bttnDone);
             this.Controls.Add(this.bttnSC_Load);
             this.Controls.Add(this.bttnSC_Save);
@@ -248,11 +226,9 @@ namespace ViCellBLU_dotNET_Test
             this.Controls.Add(this.label14);
             this.Controls.Add(this.txtSampleName);
             this.Controls.Add(this.numUD_Dilution);
-            this.Controls.Add(this.txtSampleQCName);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label6);
             this.Controls.Add(this.label7);
-            this.Controls.Add(this.label4);
             this.Controls.Add(this.txtSampleCellType);
             this.Controls.Add(this.txtSampleTag);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -277,9 +253,7 @@ namespace ViCellBLU_dotNET_Test
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox txtSampleCellType;
         private System.Windows.Forms.TextBox txtSampleTag;
-        private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.TextBox txtSampleQCName;
         private System.Windows.Forms.TextBox txtSampleName;
         private System.Windows.Forms.Label label2;
         internal System.Windows.Forms.Button bttnSC_Load;

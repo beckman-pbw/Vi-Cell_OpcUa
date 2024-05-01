@@ -29,7 +29,7 @@ namespace ViCellBLU_dotNET_Test
 		    box.Items.Add(string.Format("\tTag:    {0}", result.Tag));
             box.Items.Add(string.Format("\tImages For Analysis:    {0}", result.ImagesForAnalysis));
             box.Items.Add(string.Format("\tDilution:    {0}", result.Dilution));
-            box.Items.Add(string.Format("\tWashType:    {0}", result.WashType.ToString()));
+            box.Items.Add(string.Format("\tWorkflowType:    {0}", result.WorkflowType.ToString()));
 
             box.Items.Add("Results:");
             box.Items.Add(string.Format("\tCellCount:    {0}", result.CellCount));

@@ -118,25 +118,25 @@ namespace ViCellBluOpcUaModelDesignTests
         }
 
         [Test]
-        public void SampleToSampleConfigTests_WashType()
+        public void SampleToSampleConfigTests_WorkflowType()
         {
             var sample = new ViCellBlu.SampleConfig();
             var map = new SampleConfig();
 
-            sample.WashType = ViCellBlu.WashTypeEnum.FastWash;
+            sample.WorkflowType = ViCellBlu.WorkflowTypeEnum.LowCellDensityWorkflow;
             map = _mapper.Map<SampleConfig>(sample);
             Assert.IsNotNull(map);
-            Assert.AreEqual((uint)sample.WashType, (uint)map.WashType);
+            Assert.AreEqual((uint)sample.WorkflowType, (uint)map.WorkflowType);
 
-            sample.WashType = ViCellBlu.WashTypeEnum.NormalWash;
+            sample.WorkflowType = ViCellBlu.WorkflowTypeEnum.NormalWorkflow;
             map = _mapper.Map<SampleConfig>(sample);
             Assert.IsNotNull(map);
-            Assert.AreEqual((uint)sample.WashType, (uint)map.WashType);
+            Assert.AreEqual((uint)sample.WorkflowType, (uint)map.WorkflowType);
 
             sample = new ViCellBlu.SampleConfig();
             map = _mapper.Map<SampleConfig>(sample);
             Assert.IsNotNull(map);
-            Assert.AreEqual(default(uint), (uint)map.WashType);
+            Assert.AreEqual(default(uint), (uint)map.WorkflowType);
         }
 
         [Test]

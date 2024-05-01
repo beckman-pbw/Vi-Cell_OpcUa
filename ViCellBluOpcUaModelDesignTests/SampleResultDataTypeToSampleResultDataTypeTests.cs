@@ -601,15 +601,15 @@ namespace ViCellBluOpcUaModelDesignTests
         }
 
         [Test]
-        public void SampleResultToSampleResult_WashType()
+        public void SampleResultToSampleResult_WorkflowType()
         {
             var sampleResult = new GrpcService.SampleResult();
             var map = new ViCellBlu.SampleResult();
 
-            sampleResult.WashType = WashTypeEnum.FastWashType;
+            sampleResult.WorkflowType = WorkflowTypeEnum.LowCellDensityWorkflowType;
             map = _mapper.Map<ViCellBlu.SampleResult>(sampleResult);
             Assert.IsNotNull(map);
-            Assert.AreEqual((ViCellBlu.WashTypeEnum)sampleResult.WashType, map.WashType);
+            Assert.AreEqual((ViCellBlu.WorkflowTypeEnum)sampleResult.WorkflowType, map.WorkflowType);
         }
 
         [Test]

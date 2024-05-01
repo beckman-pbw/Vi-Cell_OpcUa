@@ -19,18 +19,18 @@ namespace ViCellBluOpcUaModelDesignTests
             return Mapper.Map<ViCellBlu.LockStateEnum, GrpcService.LockStateEnum>(lockState);
         }
 
-        [TestCase(GrpcService.WashTypeEnum.FastWashType, ExpectedResult = ViCellBlu.WashTypeEnum.FastWash)]
-        [TestCase(GrpcService.WashTypeEnum.NormalWashType, ExpectedResult = ViCellBlu.WashTypeEnum.NormalWash)]
-        public ViCellBlu.WashTypeEnum WashTypeEnumTests(GrpcService.WashTypeEnum lockState)
+        [TestCase(GrpcService.WorkflowTypeEnum.LowCellDensityWorkflowType, ExpectedResult = ViCellBlu.WorkflowTypeEnum.LowCellDensityWorkflow)]
+        [TestCase(GrpcService.WorkflowTypeEnum.NormalWorkflowType, ExpectedResult = ViCellBlu.WorkflowTypeEnum.NormalWorkflow)]
+        public ViCellBlu.WorkflowTypeEnum WorkflowTypeEnumTests(GrpcService.WorkflowTypeEnum lockState)
         {
-            return Mapper.Map<GrpcService.WashTypeEnum, ViCellBlu.WashTypeEnum>(lockState);
+            return Mapper.Map<GrpcService.WorkflowTypeEnum, ViCellBlu.WorkflowTypeEnum>(lockState);
         }
 
-        [TestCase(ViCellBlu.WashTypeEnum.FastWash, ExpectedResult = GrpcService.WashTypeEnum.FastWashType)]
-        [TestCase(ViCellBlu.WashTypeEnum.NormalWash, ExpectedResult = GrpcService.WashTypeEnum.NormalWashType)]
-        public GrpcService.WashTypeEnum WashTypeEnumTests2(ViCellBlu.WashTypeEnum lockState)
+        [TestCase(ViCellBlu.WorkflowTypeEnum.LowCellDensityWorkflow, ExpectedResult = GrpcService.WorkflowTypeEnum.LowCellDensityWorkflowType)]
+        [TestCase(ViCellBlu.WorkflowTypeEnum.NormalWorkflow, ExpectedResult = GrpcService.WorkflowTypeEnum.NormalWorkflowType)]
+        public GrpcService.WorkflowTypeEnum WorkflowTypeEnumTests2(ViCellBlu.WorkflowTypeEnum lockState)
         {
-            return Mapper.Map<ViCellBlu.WashTypeEnum, GrpcService.WashTypeEnum>(lockState);
+            return Mapper.Map<ViCellBlu.WorkflowTypeEnum, GrpcService.WorkflowTypeEnum>(lockState);
         }
 
         [TestCase(GrpcService.PrecessionEnum.ColumnMajor, ExpectedResult = ViCellBlu.PlatePrecessionEnum.ColumnMajor)]

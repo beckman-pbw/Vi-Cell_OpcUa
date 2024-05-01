@@ -24,7 +24,7 @@ using LockStateEnum = ViCellBlu.LockStateEnum;
 using MethodResultEnum = GrpcService.MethodResultEnum;
 using QualityControl = ViCellBlu.QualityControl;
 using SamplePosition = ViCellBlu.SamplePosition;
-using WashTypeEnum = ViCellBlu.WashTypeEnum;
+using WorkflowTypeEnum = ViCellBlu.WorkflowTypeEnum;
 
 namespace ViCellBluOpcUaModelDesign
 {
@@ -94,7 +94,7 @@ namespace ViCellBluOpcUaModelDesign
                 cfg.CreateMap<string, string>().ConvertUsing(s => s ?? string.Empty);
 
                 cfg.CreateMap<GrpcService.LockStateEnum, LockStateEnum>().ReverseMap();
-                cfg.CreateMap<GrpcService.WashTypeEnum, WashTypeEnum>().ReverseMap();
+                cfg.CreateMap<GrpcService.WorkflowTypeEnum, WorkflowTypeEnum>().ReverseMap();
                 cfg.CreateMap<GrpcService.SampleStatusEnum, ViCellBlu.SampleStatusEnum>().ReverseMap();
                 cfg.CreateMap<GrpcService.MethodResultEnum, ViCellBlu.MethodResultEnum>().ReverseMap();
                 cfg.CreateMap<GrpcService.ErrorLevelEnum, ViCellBlu.ErrorLevelEnum>().ReverseMap();
@@ -114,7 +114,7 @@ namespace ViCellBluOpcUaModelDesign
 
                 cfg.CreateMap<GrpcService.LockStateEnum, LockStateEnum>().ReverseMap();
                 cfg.CreateMap<GrpcService.ViCellStatusEnum, ViCellBlu.ViCellStatusEnum>().ReverseMap();
-                cfg.CreateMap<GrpcService.WashTypeEnum, WashTypeEnum>().ReverseMap();
+                cfg.CreateMap<GrpcService.WorkflowTypeEnum, WorkflowTypeEnum>().ReverseMap();
                 cfg.CreateMap<GrpcService.PrecessionEnum, PlatePrecessionEnum>().ReverseMap();
                 cfg.CreateMap<GrpcService.SampleStatusEnum, ViCellBlu.SampleStatusEnum>().ReverseMap();
                 cfg.CreateMap<GrpcService.SampleResult, ViCellBlu.SampleResult>();

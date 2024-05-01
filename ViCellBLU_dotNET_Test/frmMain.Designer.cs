@@ -69,6 +69,14 @@ namespace ViCellBLU_dotNET_Test
 			this.tpgRunSamples = new System.Windows.Forms.TabPage();
 			this.tabCtrlSamples = new System.Windows.Forms.TabControl();
 			this.tpgSingleSampleSetup = new System.Windows.Forms.TabPage();
+			this.cb_CellTypeorQC = new System.Windows.Forms.GroupBox();
+			this.rbQualityControl = new System.Windows.Forms.RadioButton();
+			this.rbCellType = new System.Windows.Forms.RadioButton();
+			this.label3 = new System.Windows.Forms.Label();
+			this.txtSampleCellTypeorQCName = new System.Windows.Forms.TextBox();
+			this.gb_PostWashOption = new System.Windows.Forms.GroupBox();
+			this.rb_PostWashFast = new System.Windows.Forms.RadioButton();
+			this.rb_PostWashNormal = new System.Windows.Forms.RadioButton();
 			this.numUD_NthImageSave = new System.Windows.Forms.NumericUpDown();
 			this.bttnSaveSample = new System.Windows.Forms.Button();
 			this.label14 = new System.Windows.Forms.Label();
@@ -79,11 +87,7 @@ namespace ViCellBLU_dotNET_Test
 			this.txtSampleTag = new System.Windows.Forms.TextBox();
 			this.bttnStartSample = new System.Windows.Forms.Button();
 			this.label6 = new System.Windows.Forms.Label();
-			this.label3 = new System.Windows.Forms.Label();
-			this.txtSampleCellType = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
-			this.label4 = new System.Windows.Forms.Label();
-			this.txtSampleQCType = new System.Windows.Forms.TextBox();
 			this.tpgMultiSampleSetup = new System.Windows.Forms.TabPage();
 			this.groupBox4 = new System.Windows.Forms.GroupBox();
 			this.rdoSortColumn = new System.Windows.Forms.RadioButton();
@@ -267,6 +271,8 @@ namespace ViCellBLU_dotNET_Test
 			this.tpgRunSamples.SuspendLayout();
 			this.tabCtrlSamples.SuspendLayout();
 			this.tpgSingleSampleSetup.SuspendLayout();
+			this.cb_CellTypeorQC.SuspendLayout();
+			this.gb_PostWashOption.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numUD_NthImageSave)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.numUD_Dilution)).BeginInit();
 			this.tpgMultiSampleSetup.SuspendLayout();
@@ -763,6 +769,8 @@ namespace ViCellBLU_dotNET_Test
 			// tpgSingleSampleSetup
 			// 
 			this.tpgSingleSampleSetup.BackColor = System.Drawing.Color.Transparent;
+			this.tpgSingleSampleSetup.Controls.Add(this.cb_CellTypeorQC);
+			this.tpgSingleSampleSetup.Controls.Add(this.gb_PostWashOption);
 			this.tpgSingleSampleSetup.Controls.Add(this.numUD_NthImageSave);
 			this.tpgSingleSampleSetup.Controls.Add(this.bttnSaveSample);
 			this.tpgSingleSampleSetup.Controls.Add(this.label14);
@@ -773,11 +781,7 @@ namespace ViCellBLU_dotNET_Test
 			this.tpgSingleSampleSetup.Controls.Add(this.txtSampleTag);
 			this.tpgSingleSampleSetup.Controls.Add(this.bttnStartSample);
 			this.tpgSingleSampleSetup.Controls.Add(this.label6);
-			this.tpgSingleSampleSetup.Controls.Add(this.label3);
-			this.tpgSingleSampleSetup.Controls.Add(this.txtSampleCellType);
 			this.tpgSingleSampleSetup.Controls.Add(this.label5);
-			this.tpgSingleSampleSetup.Controls.Add(this.label4);
-			this.tpgSingleSampleSetup.Controls.Add(this.txtSampleQCType);
 			this.tpgSingleSampleSetup.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
 			this.tpgSingleSampleSetup.Location = new System.Drawing.Point(4, 25);
 			this.tpgSingleSampleSetup.Name = "tpgSingleSampleSetup";
@@ -786,10 +790,100 @@ namespace ViCellBLU_dotNET_Test
 			this.tpgSingleSampleSetup.TabIndex = 0;
 			this.tpgSingleSampleSetup.Text = "Single Sample";
 			// 
+			// cb_CellTypeorQC
+			// 
+			this.cb_CellTypeorQC.Controls.Add(this.rbQualityControl);
+			this.cb_CellTypeorQC.Controls.Add(this.rbCellType);
+			this.cb_CellTypeorQC.Controls.Add(this.label3);
+			this.cb_CellTypeorQC.Controls.Add(this.txtSampleCellTypeorQCName);
+			this.cb_CellTypeorQC.Location = new System.Drawing.Point(134, 60);
+			this.cb_CellTypeorQC.Name = "cb_CellTypeorQC";
+			this.cb_CellTypeorQC.Size = new System.Drawing.Size(356, 93);
+			this.cb_CellTypeorQC.TabIndex = 45;
+			this.cb_CellTypeorQC.TabStop = false;
+			this.cb_CellTypeorQC.Text = "Sample Definition";
+			// 
+			// rbQualityControl
+			// 
+			this.rbQualityControl.AutoSize = true;
+			this.rbQualityControl.Location = new System.Drawing.Point(32, 51);
+			this.rbQualityControl.Name = "rbQualityControl";
+			this.rbQualityControl.Size = new System.Drawing.Size(112, 20);
+			this.rbQualityControl.TabIndex = 19;
+			this.rbQualityControl.TabStop = true;
+			this.rbQualityControl.Text = "Quality Control";
+			this.rbQualityControl.UseVisualStyleBackColor = true;
+			// 
+			// rbCellType
+			// 
+			this.rbCellType.AutoSize = true;
+			this.rbCellType.Checked = true;
+			this.rbCellType.Location = new System.Drawing.Point(32, 25);
+			this.rbCellType.Name = "rbCellType";
+			this.rbCellType.Size = new System.Drawing.Size(84, 20);
+			this.rbCellType.TabIndex = 18;
+			this.rbCellType.TabStop = true;
+			this.rbCellType.Text = "Cell Type";
+			this.rbCellType.UseVisualStyleBackColor = true;
+			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(165, 25);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(48, 16);
+			this.label3.TabIndex = 14;
+			this.label3.Text = "Name:";
+			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+			// 
+			// txtSampleCellTypeorQCName
+			// 
+			this.txtSampleCellTypeorQCName.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.txtSampleCellTypeorQCName.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this.txtSampleCellTypeorQCName.Location = new System.Drawing.Point(168, 51);
+			this.txtSampleCellTypeorQCName.Name = "txtSampleCellTypeorQCName";
+			this.txtSampleCellTypeorQCName.Size = new System.Drawing.Size(150, 22);
+			this.txtSampleCellTypeorQCName.TabIndex = 15;
+			this.txtSampleCellTypeorQCName.Text = "Yeast";
+			// 
+			// gb_PostWashOption
+			// 
+			this.gb_PostWashOption.Controls.Add(this.rb_PostWashFast);
+			this.gb_PostWashOption.Controls.Add(this.rb_PostWashNormal);
+			this.gb_PostWashOption.Location = new System.Drawing.Point(316, 216);
+			this.gb_PostWashOption.Name = "gb_PostWashOption";
+			this.gb_PostWashOption.Size = new System.Drawing.Size(231, 50);
+			this.gb_PostWashOption.TabIndex = 44;
+			this.gb_PostWashOption.TabStop = false;
+			this.gb_PostWashOption.Text = "Workflow";
+			// 
+			// rb_PostWashFast
+			// 
+			this.rb_PostWashFast.AutoSize = true;
+			this.rb_PostWashFast.Location = new System.Drawing.Point(83, 22);
+			this.rb_PostWashFast.Name = "rb_PostWashFast";
+			this.rb_PostWashFast.Size = new System.Drawing.Size(124, 20);
+			this.rb_PostWashFast.TabIndex = 1;
+			this.rb_PostWashFast.TabStop = true;
+			this.rb_PostWashFast.Text = "Low Cell Density";
+			this.rb_PostWashFast.UseVisualStyleBackColor = true;
+			// 
+			// rb_PostWashNormal
+			// 
+			this.rb_PostWashNormal.AutoSize = true;
+			this.rb_PostWashNormal.Checked = true;
+			this.rb_PostWashNormal.Location = new System.Drawing.Point(7, 22);
+			this.rb_PostWashNormal.Name = "rb_PostWashNormal";
+			this.rb_PostWashNormal.Size = new System.Drawing.Size(70, 20);
+			this.rb_PostWashNormal.TabIndex = 0;
+			this.rb_PostWashNormal.TabStop = true;
+			this.rb_PostWashNormal.Text = "Normal";
+			this.rb_PostWashNormal.UseVisualStyleBackColor = true;
+			// 
 			// numUD_NthImageSave
 			// 
 			this.numUD_NthImageSave.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.numUD_NthImageSave.Location = new System.Drawing.Point(210, 199);
+			this.numUD_NthImageSave.Location = new System.Drawing.Point(210, 244);
 			this.numUD_NthImageSave.Name = "numUD_NthImageSave";
 			this.numUD_NthImageSave.Size = new System.Drawing.Size(49, 22);
 			this.numUD_NthImageSave.TabIndex = 42;
@@ -819,7 +913,7 @@ namespace ViCellBLU_dotNET_Test
 			// label14
 			// 
 			this.label14.AutoSize = true;
-			this.label14.Location = new System.Drawing.Point(53, 201);
+			this.label14.Location = new System.Drawing.Point(53, 246);
 			this.label14.Name = "label14";
 			this.label14.Size = new System.Drawing.Size(142, 16);
 			this.label14.TabIndex = 41;
@@ -828,16 +922,15 @@ namespace ViCellBLU_dotNET_Test
 			// 
 			// numUD_Dilution
 			// 
-			this.numUD_Dilution.Enabled = false;
 			this.numUD_Dilution.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.numUD_Dilution.Location = new System.Drawing.Point(210, 160);
+			this.numUD_Dilution.Location = new System.Drawing.Point(210, 205);
 			this.numUD_Dilution.Maximum = new decimal(new int[] {
-            4,
+            10,
             0,
             0,
             0});
 			this.numUD_Dilution.Minimum = new decimal(new int[] {
-            4,
+            1,
             0,
             0,
             0});
@@ -871,7 +964,7 @@ namespace ViCellBLU_dotNET_Test
 			// label7
 			// 
 			this.label7.AutoSize = true;
-			this.label7.Location = new System.Drawing.Point(140, 163);
+			this.label7.Location = new System.Drawing.Point(140, 208);
 			this.label7.Name = "label7";
 			this.label7.Size = new System.Drawing.Size(55, 16);
 			this.label7.TabIndex = 24;
@@ -892,7 +985,7 @@ namespace ViCellBLU_dotNET_Test
 			// 
 			this.txtSampleTag.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.txtSampleTag.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.txtSampleTag.Location = new System.Drawing.Point(211, 123);
+			this.txtSampleTag.Location = new System.Drawing.Point(211, 168);
 			this.txtSampleTag.Name = "txtSampleTag";
 			this.txtSampleTag.Size = new System.Drawing.Size(209, 22);
 			this.txtSampleTag.TabIndex = 21;
@@ -902,7 +995,7 @@ namespace ViCellBLU_dotNET_Test
 			// 
 			this.bttnStartSample.BackColor = System.Drawing.SystemColors.Control;
 			this.bttnStartSample.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.bttnStartSample.Location = new System.Drawing.Point(177, 244);
+			this.bttnStartSample.Location = new System.Drawing.Point(177, 289);
 			this.bttnStartSample.Margin = new System.Windows.Forms.Padding(9, 6, 9, 6);
 			this.bttnStartSample.Name = "bttnStartSample";
 			this.bttnStartSample.Size = new System.Drawing.Size(110, 30);
@@ -914,32 +1007,12 @@ namespace ViCellBLU_dotNET_Test
 			// label6
 			// 
 			this.label6.AutoSize = true;
-			this.label6.Location = new System.Drawing.Point(159, 125);
+			this.label6.Location = new System.Drawing.Point(159, 170);
 			this.label6.Name = "label6";
 			this.label6.Size = new System.Drawing.Size(36, 16);
 			this.label6.TabIndex = 20;
 			this.label6.Text = "Tag:";
 			this.label6.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// label3
-			// 
-			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(126, 51);
-			this.label3.Name = "label3";
-			this.label3.Size = new System.Drawing.Size(69, 16);
-			this.label3.TabIndex = 14;
-			this.label3.Text = "Cell Type:";
-			this.label3.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// txtSampleCellType
-			// 
-			this.txtSampleCellType.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.txtSampleCellType.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.txtSampleCellType.Location = new System.Drawing.Point(211, 49);
-			this.txtSampleCellType.Name = "txtSampleCellType";
-			this.txtSampleCellType.Size = new System.Drawing.Size(150, 22);
-			this.txtSampleCellType.TabIndex = 15;
-			this.txtSampleCellType.Text = "Yeast";
 			// 
 			// label5
 			// 
@@ -950,25 +1023,6 @@ namespace ViCellBLU_dotNET_Test
 			this.label5.TabIndex = 18;
 			this.label5.Text = "Name:";
 			this.label5.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// label4
-			// 
-			this.label4.AutoSize = true;
-			this.label4.Location = new System.Drawing.Point(125, 87);
-			this.label4.Name = "label4";
-			this.label4.Size = new System.Drawing.Size(70, 16);
-			this.label4.TabIndex = 16;
-			this.label4.Text = "QC Name:";
-			this.label4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-			// 
-			// txtSampleQCType
-			// 
-			this.txtSampleQCType.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.txtSampleQCType.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this.txtSampleQCType.Location = new System.Drawing.Point(211, 85);
-			this.txtSampleQCType.Name = "txtSampleQCType";
-			this.txtSampleQCType.Size = new System.Drawing.Size(150, 22);
-			this.txtSampleQCType.TabIndex = 17;
 			// 
 			// tpgMultiSampleSetup
 			// 
@@ -1811,10 +1865,10 @@ namespace ViCellBLU_dotNET_Test
             0,
             0});
 			this.numUDCT_Images.Minimum = new decimal(new int[] {
-            1000,
+            10,
             0,
             0,
-            -2147483648});
+            0});
 			this.numUDCT_Images.Name = "numUDCT_Images";
 			this.numUDCT_Images.Size = new System.Drawing.Size(77, 26);
 			this.numUDCT_Images.TabIndex = 35;
@@ -3325,6 +3379,10 @@ namespace ViCellBLU_dotNET_Test
 			this.tabCtrlSamples.ResumeLayout(false);
 			this.tpgSingleSampleSetup.ResumeLayout(false);
 			this.tpgSingleSampleSetup.PerformLayout();
+			this.cb_CellTypeorQC.ResumeLayout(false);
+			this.cb_CellTypeorQC.PerformLayout();
+			this.gb_PostWashOption.ResumeLayout(false);
+			this.gb_PostWashOption.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.numUD_NthImageSave)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.numUD_Dilution)).EndInit();
 			this.tpgMultiSampleSetup.ResumeLayout(false);
@@ -3408,9 +3466,7 @@ namespace ViCellBLU_dotNET_Test
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox txtSampleName;
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.TextBox txtSampleQCType;
-        private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.TextBox txtSampleCellType;
+        private System.Windows.Forms.TextBox txtSampleCellTypeorQCName;
         private System.Windows.Forms.Label label3;
         internal System.Windows.Forms.Button bttnStartSample;
         private System.Windows.Forms.TabPage tpgMultiSampleSetup;
@@ -3614,5 +3670,11 @@ namespace ViCellBLU_dotNET_Test
 		internal System.Windows.Forms.Button btnExportEncryptedResult;
 		private System.Windows.Forms.TabPage tabErrorStatus;
 		private System.Windows.Forms.Label lblAppVersion;
+		private System.Windows.Forms.GroupBox gb_PostWashOption;
+		private System.Windows.Forms.RadioButton rb_PostWashFast;
+		private System.Windows.Forms.RadioButton rb_PostWashNormal;
+		private System.Windows.Forms.GroupBox cb_CellTypeorQC;
+		private System.Windows.Forms.RadioButton rbQualityControl;
+		private System.Windows.Forms.RadioButton rbCellType;
 	}
 }

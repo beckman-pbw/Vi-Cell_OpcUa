@@ -16,7 +16,7 @@ namespace ViCellBLU_dotNET
             CellTypeName = "";
             QCName = "";
             SaveEveryNthImage = 1;
-            WashType = ViCellBLU.WashType.Normal;
+            WorkflowType = ViCellBLU.WorkflowType.Normal;
         }
 
         [DataMember()]
@@ -75,7 +75,7 @@ namespace ViCellBLU_dotNET
         }
 
         [DataMember()]
-        public ViCellBLU.WashType WashType { get; set; } = ViCellBLU.WashType.Normal;
+        public ViCellBLU.WorkflowType WorkflowType { get; set; } = ViCellBLU.WorkflowType.Normal;
 
         // ************************************
         public override string ToString()

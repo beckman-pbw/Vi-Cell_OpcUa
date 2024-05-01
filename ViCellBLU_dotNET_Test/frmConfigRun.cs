@@ -78,7 +78,6 @@ namespace ViCellBLU_dotNET_Test
                     txtSampleName.Text = cfg.Name;
                     txtSampleTag.Text = cfg.Tag;
                     txtSampleCellType.Text = cfg.CellTypeName;
-                    txtSampleQCName.Text = cfg.QCName;
                     numUD_Dilution.Value = cfg.Dilution;
                     numUD_NthImageSave.Value = cfg.SaveEveryNthImage;
 
@@ -116,7 +115,6 @@ namespace ViCellBLU_dotNET_Test
                     cfg.Name = txtSampleName.Text;
                     cfg.Tag = txtSampleTag.Text;
                     cfg.CellTypeName = txtSampleCellType.Text;
-                    cfg.QCName = txtSampleQCName.Text;
                     cfg.Dilution = (uint)numUD_Dilution.Value;
                     cfg.SaveEveryNthImage = (uint)numUD_NthImageSave.Value;
                     XmlUtils<SampleConfig>.Save(sfd.FileName, cfg);

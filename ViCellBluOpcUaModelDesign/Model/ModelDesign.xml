@@ -59,8 +59,8 @@ https://opcua.rocks/step-3-setup-visual-studio-to-edit-opc-ua-modeldesign-files/
       <opc:Field Name="Dilution" DataType="ua:UInt32" ValueRank="Scalar" ModellingRule="Mandatory">
         <opc:Description>Dilution</opc:Description>
       </opc:Field>
-      <opc:Field Name="WashType" DataType="WashTypeEnum" ValueRank="Scalar" ModellingRule="Mandatory">
-        <opc:Description>Wash Type</opc:Description>
+      <opc:Field Name="WorkflowType" DataType="WorkflowTypeEnum" ValueRank="Scalar" ModellingRule="Mandatory">
+        <opc:Description>Workflow Type</opc:Description>
       </opc:Field>
       <opc:Field Name="Tag" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
         <opc:Description>Sample Tag</opc:Description>
@@ -189,8 +189,8 @@ https://opcua.rocks/step-3-setup-visual-studio-to-edit-opc-ua-modeldesign-files/
       <opc:Field Name="Dilution" DataType="ua:UInt32" ValueRank="Scalar" ModellingRule="Optional">
         <opc:Description>Dilution</opc:Description>
       </opc:Field>
-      <opc:Field Name="WashType" DataType="WashTypeEnum" ValueRank="Scalar" ModellingRule="Optional">
-        <opc:Description>Wash Type</opc:Description>
+      <opc:Field Name="WorkflowType" DataType="WorkflowTypeEnum" ValueRank="Scalar" ModellingRule="Optional">
+        <opc:Description>Workflow Type</opc:Description>
       </opc:Field>
       <opc:Field Name="Tag" DataType="ua:String" ValueRank="Scalar" ModellingRule="Optional">
         <opc:Description>Sample Tag</opc:Description>
@@ -604,7 +604,6 @@ https://opcua.rocks/step-3-setup-visual-studio-to-edit-opc-ua-modeldesign-files/
 	  </opc:Fields>
   </opc:DataType>
 
-  <!--VcbResultExportConfig-->
   <opc:DataType SymbolicName="VcbResultExportConfig" BaseType="ua:Structure">
 	  <opc:Description>DataType for ExportConfig automation responses</opc:Description>
 	  <opc:Fields>
@@ -698,7 +697,8 @@ https://opcua.rocks/step-3-setup-visual-studio-to-edit-opc-ua-modeldesign-files/
 	  </opc:Fields>
   </opc:DataType>
 
-  <!--### Enumeration Data Types ###-->
+
+<!--### Enumeration Data Types ###-->
   <opc:DataType SymbolicName="ViCellStatusEnum" BaseType="ua:Enumeration">
     <opc:Fields>
       <opc:Field Name="Idle" DataType="ua:Int32" Identifier="0"/>
@@ -722,10 +722,10 @@ https://opcua.rocks/step-3-setup-visual-studio-to-edit-opc-ua-modeldesign-files/
     </opc:Fields>
   </opc:DataType>
 
-  <opc:DataType SymbolicName="WashTypeEnum" BaseType="ua:Enumeration">
+  <opc:DataType SymbolicName="WorkflowTypeEnum" BaseType="ua:Enumeration">
     <opc:Fields>
-      <opc:Field Name="NormalWash" DataType="ua:Int32" Identifier="0"/>
-      <opc:Field Name="FastWash" DataType="ua:Int32" Identifier="1"/>
+      <opc:Field Name="NormalWorkflow" DataType="ua:Int32" Identifier="0"/>
+      <opc:Field Name="LowCellDensityWorkflow" DataType="ua:Int32" Identifier="1"/>
     </opc:Fields>
   </opc:DataType>
 
@@ -1088,7 +1088,7 @@ https://opcua.rocks/step-3-setup-visual-studio-to-edit-opc-ua-modeldesign-files/
 		</opc:Children>
 	</opc:ObjectType>
 
-  <!--### Objects ###-->
+<!--### Objects ###-->
   <opc:Object SymbolicName="ViCellBluState" SupportsEvents="true" ModellingRule="Mandatory">
     <opc:DisplayName>ViCell BLU</opc:DisplayName>
     <opc:BrowseName>ViCellBluStateObject</opc:BrowseName>
@@ -1130,7 +1130,7 @@ https://opcua.rocks/step-3-setup-visual-studio-to-edit-opc-ua-modeldesign-files/
 
   </opc:Object>
 
-  <!--### Method Types ###-->
+<!--### Method Types ###-->
   <opc:ObjectType SymbolicName="PlayControlFolderType" BaseType="ua:FolderType" ModellingRule="Mandatory">
 	  <opc:Children>
 		  <opc:Method SymbolicName="StartSample" TypeDefinition="StartSample" ModellingRule="Mandatory"/>

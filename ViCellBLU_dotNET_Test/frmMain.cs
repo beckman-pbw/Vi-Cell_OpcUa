@@ -691,34 +691,38 @@ namespace ViCellBLU_dotNET_Test
         {
             ShowButtons(false);
             ClearCallResultDisplay(Color.Yellow);
+
+            if (String.IsNullOrWhiteSpace(txtSampleCellTypeorQCName.Text))
+            {
+                lstCallResult.Items.Add("StartSample exception:");
+                lstCallResult.Items.Add("Cell Type / QC Name cannot be blank");
+                ShowButtons(true);
+                return;
+            }
+
+
             try
             {
-                if (txtSampleCellType.Text.Length > 0)
+                SampleConfig sample = new SampleConfig();
+                sample.Name = txtSampleName.Text;
+                sample.Tag = txtSampleTag.Text;
+                sample.Dilution = (uint)numUD_Dilution.Value;
+                sample.SaveEveryNthImage = (uint)numUD_NthImageSave.Value;
+                if (rbCellType.Checked)
                 {
-                    SampleConfig sample = new SampleConfig();
-                    sample.Name = txtSampleName.Text;
-                    sample.Tag = txtSampleTag.Text;
-                    sample.Dilution = (uint)numUD_Dilution.Value;
-                    sample.SaveEveryNthImage = (uint)numUD_NthImageSave.Value;
-                    sample.CellTypeName = txtSampleCellType.Text;
+                    sample.CellTypeName = txtSampleCellTypeorQCName.Text;
                     sample.QCName = "";
-                    var res = _myBlu.StartSample(sample);
-                    UpdateCallResultDisplay(res.MethodResult, res.ErrorLevel, res.ResponseDescription);
-
                 }
-                else if (txtSampleQCType.Text.Length > 0)
+                else
                 {
-                    SampleConfig sample = new SampleConfig();
-                    sample.Name = txtSampleName.Text;
-                    sample.Tag = txtSampleTag.Text;
-                    sample.Dilution = (uint)numUD_Dilution.Value;
-                    sample.SaveEveryNthImage = (uint)numUD_NthImageSave.Value;
                     sample.CellTypeName = "";
-                    sample.QCName = txtSampleQCType.Text;
-
-                    var res = _myBlu.StartSample(sample);
-                    UpdateCallResultDisplay(res.MethodResult, res.ErrorLevel, res.ResponseDescription);
+                    sample.QCName = txtSampleCellTypeorQCName.Text;
                 }
+
+                sample.WorkflowType = rb_PostWashNormal.Checked ? ViCellBLU.WorkflowType.Normal : ViCellBLU.WorkflowType.Fast;
+
+                var res = _myBlu.StartSample(sample);
+                UpdateCallResultDisplay(res.MethodResult, res.ErrorLevel, res.ResponseDescription);
             }
             catch (Exception ex)
             {
@@ -905,8 +909,7 @@ namespace ViCellBLU_dotNET_Test
 
                     txtSampleName.Text = cfg.Name;
                     txtSampleTag.Text = cfg.Tag;
-                    txtSampleCellType.Text = cfg.CellTypeName;
-                    txtSampleQCType.Text = cfg.QCName;
+                    txtSampleCellTypeorQCName.Text = cfg.CellTypeName;
                     numUD_Dilution.Value = cfg.Dilution;
                     numUD_NthImageSave.Value = cfg.SaveEveryNthImage;
                 }
@@ -1256,8 +1259,8 @@ namespace ViCellBLU_dotNET_Test
                 sample.QCName = Convert.ToString(row[CN_QCName]);
                 var r = char.ToUpper(Convert.ToChar(row[CN_Row]));
                 sample.Position.Set((SamplePosition.RowDef)r, (SamplePosition.ColumnDef) Convert.ToByte(row[CN_Col]));
-                var wt = Convert.ToUInt32(row[CN_WashType]);
-                sample.WashType = (ViCellBLU.WashType)wt;
+                var wt = Convert.ToUInt32(row[CN_WorkflowType]);
+                sample.WorkflowType = (ViCellBLU.WorkflowType)wt;
                 setCfg.Samples.Add(sample);
             }
             return setCfg;
@@ -1380,7 +1383,7 @@ namespace ViCellBLU_dotNET_Test
         public const string CN_CellTypeName = "CellTypeName";
         public const string CN_QCName = "QCName";
         public const string CN_SaveEveryNthImage = "SaveEveryNthImage";
-        public const string CN_WashType = "WashType";
+        public const string CN_WorkflowType = "WorkflowType";
 	#endregion
 
         // **************************************************************************
@@ -1409,8 +1412,8 @@ namespace ViCellBLU_dotNET_Test
             dt.Columns.Add(CN_SaveEveryNthImage, typeof(System.UInt32));
             dt.Columns[CN_SaveEveryNthImage].DefaultValue = 1;
 
-            dt.Columns.Add(CN_WashType, typeof(System.UInt32));
-            dt.Columns[CN_WashType].DefaultValue = (uint)ViCellBLU.WashType.Normal;
+            dt.Columns.Add(CN_WorkflowType, typeof(System.UInt32));
+            dt.Columns[CN_WorkflowType].DefaultValue = (uint)ViCellBLU.WorkflowType.Normal;
 
             dt.Columns.Add(CN_Tag, typeof(System.String));
             dt.Columns[CN_Tag].DefaultValue = "";
@@ -1492,7 +1495,7 @@ namespace ViCellBLU_dotNET_Test
                         row[CN_SaveEveryNthImage] = cfg.SaveEveryNthImage;
                         row[CN_Row] = (Char)cfg.Position.Row;
                         row[CN_Col] = (Char)cfg.Position.Column;
-                        row[CN_WashType] = cfg.WashType;
+                        row[CN_WorkflowType] = cfg.WorkflowType;
                         row[CN_Dilution] = cfg.Dilution;
                         _dtSet.Rows.Add(row);
                     }
@@ -1514,7 +1517,7 @@ namespace ViCellBLU_dotNET_Test
             dgvSet.Columns[CN_CellTypeName].Width = 110;
             dgvSet.Columns[CN_QCName].Width = 85;
             dgvSet.Columns[CN_SaveEveryNthImage].Width = 90;
-            dgvSet.Columns[CN_WashType].Width = 65;
+            dgvSet.Columns[CN_WorkflowType].Width = 65;
             dgvSet.Columns[CN_Tag].Width = 80;
         }
 
@@ -1584,8 +1587,7 @@ namespace ViCellBLU_dotNET_Test
 
                     cfg.Name = txtSampleName.Text;
                     cfg.Tag = txtSampleTag.Text;
-                    cfg.CellTypeName = txtSampleCellType.Text;
-                    cfg.QCName = txtSampleQCType.Text;
+                    cfg.CellTypeName = txtSampleCellTypeorQCName.Text;
                     cfg.Dilution = (uint)numUD_Dilution.Value;
                     cfg.SaveEveryNthImage = (uint)numUD_NthImageSave.Value;
                     XmlUtils<SampleConfig>.Save(sfd.FileName, cfg);

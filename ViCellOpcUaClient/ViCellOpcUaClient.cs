@@ -510,7 +510,7 @@ namespace ViCellOpcUaClient
                             CellType = new ViCellBlu.CellType {CellTypeName = "Insect"}, // You must choose between CellType OR QualityControl... if one is valid, the other must be string.Empty.
                             QualityControl = {QualityControlName = string.Empty}, // You must choose between CellType OR QualityControl... if one is valid, the other must be string.Empty.
                             SaveEveryNthImage = 1,
-                            WashType = ViCellBlu.WashTypeEnum.NormalWash // Normal or Fast
+                            WorkflowType = ViCellBlu.WorkflowTypeEnum.NormalWorkflow // Normal or Fast
                         };
 
                         var callResult = new ViCellBlu.VcbResult { ErrorLevel = ViCellBlu.ErrorLevelEnum.Warning, MethodResult = ViCellBlu.MethodResultEnum.Failure };
